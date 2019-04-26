@@ -313,6 +313,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/openshift/api"
+  packages = ["config/v1"]
+  revision = "77b8897ec79a562e85920134fc65b63300c4d27a"
+
+[[projects]]
+  branch = "master"
   name = "github.com/operator-framework/operator-sdk"
   packages = [
     "pkg/k8sutil",
@@ -878,7 +884,6 @@
     "pkg/client/apiutil",
     "pkg/client/config",
     "pkg/controller",
-    "pkg/controller/controllerutil",
     "pkg/event",
     "pkg/handler",
     "pkg/internal/controller",
@@ -927,6 +932,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ea737260ca68435e118034b01a509a84a26ae262b1a5533c396dbcee580bec02"
+  inputs-digest = "c96f36e23ac4b5ad104190ef6b0d76a0d66c203a42c9414e720b84b8e54a76b9"
   solver-name = "gps-cdcl"
   solver-version = 1
