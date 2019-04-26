@@ -5,7 +5,6 @@ import (
 	"flag"
 
 	mf "github.com/jcrossley3/manifestival"
-	configv1 "github.com/openshift/api/config/v1"
 	servingv1alpha1 "github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1"
 
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -24,10 +23,6 @@ var (
 		"The filename containing the YAML resources to apply")
 	recursive = flag.Bool("recursive", false,
 		"If filename is a directory, process all manifests recursively")
-	autoinstall = flag.Bool("install", false,
-		"Automatically creates an Install resource if none exist")
-	namespace = flag.String("namespace", "",
-		"Overrides namespace in manifest (env vars resolved in-container)")
 	log = logf.Log.WithName("controller_install")
 )
 
@@ -48,11 +43,6 @@ func newReconciler(mgr manager.Manager, man mf.Manifest) reconcile.Reconciler {
 
 // add adds a new Controller to mgr with r as the reconcile.Reconciler
 func add(mgr manager.Manager, r reconcile.Reconciler) error {
-	// Register scheme
-	if err := configv1.Install(mgr.GetScheme()); err != nil {
-		log.Error(err, "Unable to register scheme")
-	}
-
 	// Create a new controller
 	c, err := controller.New("install-controller", mgr, controller.Options{Reconciler: r})
 	if err != nil {
@@ -118,9 +108,6 @@ func (r *ReconcileInstall) Reconcile(request reconcile.Request) (reconcile.Resul
 func (r *ReconcileInstall) install(instance *servingv1alpha1.Install) error {
 	// Filter resources as appropriate
 	filters := []mf.FilterFn{mf.ByOwner(instance)}
-	if len(*namespace) > 0 {
-		filters = append(filters, mf.ByNamespace(*namespace))
-	}
 	r.config.Filter(filters...)
 
 	// if instance.Status.Version == version.Version {

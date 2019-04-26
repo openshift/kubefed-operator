@@ -77,6 +77,3 @@ required = [
   branch = "master"
   name = "github.com/jcrossley3/manifestival"
 
-[[constraint]]
-  branch = "master"
-  name = "github.com/openshift/api"
