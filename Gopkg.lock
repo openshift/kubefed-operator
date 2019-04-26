@@ -260,6 +260,12 @@
   version = "v0.3.7"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/jcrossley3/manifestival"
+  packages = ["."]
+  revision = "5bb14668b6d3d7b09b4d6b2dcba367472eaad31b"
+
+[[projects]]
   name = "github.com/joho/godotenv"
   packages = ["."]
   revision = "23d116af351c84513e1946b527c88823e476be13"
@@ -679,6 +685,7 @@
 [[projects]]
   name = "k8s.io/apimachinery"
   packages = [
+    "pkg/api/equality",
     "pkg/api/errors",
     "pkg/api/meta",
     "pkg/api/resource",
@@ -870,15 +877,26 @@
     "pkg/client",
     "pkg/client/apiutil",
     "pkg/client/config",
+    "pkg/controller",
+    "pkg/controller/controllerutil",
+    "pkg/event",
+    "pkg/handler",
+    "pkg/internal/controller",
+    "pkg/internal/controller/metrics",
     "pkg/internal/recorder",
     "pkg/leaderelection",
     "pkg/manager",
     "pkg/metrics",
     "pkg/patch",
+    "pkg/predicate",
+    "pkg/reconcile",
     "pkg/recorder",
     "pkg/runtime/inject",
     "pkg/runtime/log",
+    "pkg/runtime/scheme",
     "pkg/runtime/signals",
+    "pkg/source",
+    "pkg/source/internal",
     "pkg/webhook/admission",
     "pkg/webhook/admission/types",
     "pkg/webhook/internal/metrics",
@@ -909,6 +927,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "dc14d3ed5b747dafed52094efdafd2efff37d5107585137e1783c366770d7c47"
+  inputs-digest = "ea737260ca68435e118034b01a509a84a26ae262b1a5533c396dbcee580bec02"
   solver-name = "gps-cdcl"
   solver-version = 1
