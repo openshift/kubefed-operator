@@ -13,6 +13,8 @@ type InstallSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book.kubebuilder.io/beyond_basics/generating_crd.html
+
+	Scope InstallationScope `json:"scope"`
 }
 
 // InstallStatus defines the observed state of Install
@@ -34,6 +36,13 @@ type Install struct {
 	Spec   InstallSpec   `json:"spec,omitempty"`
 	Status InstallStatus `json:"status,omitempty"`
 }
+
+type InstallationScope string
+
+var (
+	InstallationScopeNamespaceScoped InstallationScope = "NamespaceScoped"
+	InstallationScopeClusterScoped   InstallationScope = "ClusterScoped"
+)
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
