@@ -2,8 +2,9 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
   annotations:
+    alm-examples: '[{"apiVersion":"operator.kubefed.io/v1alpha1","kind":"Install","metadata":{"name":"example-install"},"spec":{"size":3}}]'
     capabilities: Basic Install
-  name: kubefed-operator.v0.0.8
+  name: kubefed-operator.v0.0.10
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -12,7 +13,7 @@ spec:
     - kind: Install
       name: installs.operator.kubefed.io
       version: v1alpha1
-  description: Prototype first-class operator for Kubernetes federation v2
+  description: Placeholder description
   displayName: Kubefed Operator
   install:
     spec:
@@ -105,4 +106,4 @@ spec:
     type: AllNamespaces
   maturity: alpha
   provider: {}
-  version: 0.0.8
+  version: 0.0.10

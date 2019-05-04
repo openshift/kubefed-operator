@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: federation-controller-manager
+  labels:
+    control-plane: controller-manager
+    controller-tools.k8s.io: "1.0"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      control-plane: controller-manager
+      controller-tools.k8s.io: "1.0"
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        control-plane: controller-manager
+        controller-tools.k8s.io: "1.0"
+    spec:
+      serviceAccountName: federation-controller
+      containers:
+      - args:
+        - --federation-namespace=$(FEDERATION_NAMESPACE)
+        command:
+        - /root/controller-manager
+        image: "quay.io/kubernetes-multicluster/federation-v2:v0.0.8"
+        imagePullPolicy: Always
+        name: controller-manager
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 64Mi
+        env:
+        - name: FEDERATION_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+      terminationGracePeriodSeconds: 10
