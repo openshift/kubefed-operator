@@ -103,6 +103,8 @@ func (r *ReconcileInstall) Reconcile(request reconcile.Request) (reconcile.Resul
 		}
 	}
 
+	reqLogger.Info("Finished reconciling install")
+
 	return reconcile.Result{}, nil
 }
 
@@ -110,7 +112,7 @@ func (r *ReconcileInstall) Reconcile(request reconcile.Request) (reconcile.Resul
 func (r *ReconcileInstall) install(instance *servingv1alpha1.Install) error {
 	// Transform resources as appropriate
 	fns := []mf.Transformer{mf.InjectOwner(instance)}
-	fns = append(fns, mf.InjectNamespace(*namespace))
+	fns = append(fns, mf.InjectNamespace(instance.Namespace))
 
 	r.config.Transform(fns...)
 
