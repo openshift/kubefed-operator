@@ -16,7 +16,7 @@ spec:
       containers:
         - name: kubefed-operator
           # Replace this with the built image name
-          image: REPLACE_IMAGE
+          image: quay.io/pmorie/kubefed-operator:v0.0.10
           command:
           - kubefed-operator
           imagePullPolicy: Always

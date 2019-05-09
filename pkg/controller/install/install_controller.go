@@ -23,13 +23,15 @@ var (
 		"The filename containing the YAML resources to apply")
 	recursive = flag.Bool("recursive", false,
 		"If filename is a directory, process all manifests recursively")
+	namespace = flag.String("namespace", "",
+		"Overrides namespace in manifest (env vars resolved in-container)")
 	log = logf.Log.WithName("controller_install")
 )
 
 // Add creates a new Install Controller and adds it to the Manager. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
 func Add(mgr manager.Manager) error {
-	manifest, err := mf.NewYamlManifest(*filename, *recursive, mgr.GetClient())
+	manifest, err := mf.NewManifest(*filename, *recursive, mgr.GetClient())
 	if err != nil {
 		return err
 	}
@@ -101,30 +103,29 @@ func (r *ReconcileInstall) Reconcile(request reconcile.Request) (reconcile.Resul
 		}
 	}
 
+	reqLogger.Info("Finished reconciling install")
+
 	return reconcile.Result{}, nil
 }
 
 // Apply the embedded resources
 func (r *ReconcileInstall) install(instance *servingv1alpha1.Install) error {
-	// Filter resources as appropriate
-	filters := []mf.FilterFn{mf.ByOwner(instance)}
-	r.config.Filter(filters...)
+	// Transform resources as appropriate
+	fns := []mf.Transformer{mf.InjectOwner(instance)}
+	fns = append(fns, mf.InjectNamespace(instance.Namespace))
 
-	// if instance.Status.Version == version.Version {
-	// 	// we've already successfully applied our YAML
-	// 	return nil
-	// }
-	// // Apply the resources in the YAML file
-	// if err := r.config.ApplyAll(); err != nil {
-	// 	return err
-	// }
+	r.config.Transform(fns...)
 
-	// // Update status
-	// instance.Status.Resources = r.config.ResourceNames()
-	// instance.Status.Version = version.Version
-	// if err := r.client.Status().Update(context.TODO(), instance); err != nil {
-	// 	return err
-	// }
+	// Apply the resources in the YAML file
+	if err := r.config.ApplyAll(); err != nil {
+		return err
+	}
+
+	// Update status
+	instance.Status.Resources = r.config.Resources
+	if err := r.client.Status().Update(context.TODO(), instance); err != nil {
+		return err
+	}
 	return nil
 }
 
