@@ -23,9 +23,11 @@ spec:
       containers:
       - args:
         - --federation-namespace=$(FEDERATION_NAMESPACE)
+        - -v=5
+        - --logtostderr
         command:
         - /root/controller-manager
-        image: "quay.io/kubernetes-multicluster/federation-v2:v0.0.8"
+        image: "quay.io/kubernetes-multicluster/federation-v2:v0.0.10"
         imagePullPolicy: Always
         name: controller-manager
         resources:
@@ -36,6 +38,8 @@ spec:
             cpu: 100m
             memory: 64Mi
         env:
+        - name: DEFAULT_FEDERATION_SCOPE
+          value: Namespaced
         - name: FEDERATION_NAMESPACE
           valueFrom:
             fieldRef:
