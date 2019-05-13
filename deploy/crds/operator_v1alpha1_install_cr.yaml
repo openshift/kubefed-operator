@@ -2,4 +2,5 @@ apiVersion: operator.kubefed.io/v1alpha1
 kind: Install
 metadata:
   name: example-install
-spec: {}
+spec:
+  scope: Namespaced
