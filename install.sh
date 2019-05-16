@@ -40,6 +40,9 @@ else
     for f in ./deploy/*.yaml ; do     
 	kubectl apply -f "${f}" --validate=false --namespace=${NAMESPACE} 
     done
+    for f in ./deploy/resources/*_crd.yaml ; do     
+	kubectl apply -f "${f}" --validate=false 
+    done
     echo "Deployed all the operator yamls for kubefed-operator in the cluster"
 fi
 
