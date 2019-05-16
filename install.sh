@@ -5,34 +5,41 @@
 
 set -e
 
-NAMESPACE=$1
-
-if [ -z "$1" ]; then
-    echo "Enter the namespace after ./install.sh"
-    exit 1
+if [ "$#" -eq 0 ]; then
+    NAMESPACE="default"
+    LOCATION="local"
+elif [ "$#" -eq 1 ]; then
+    NAMESPACE=$1
+    LOCATION="local"
+else
+    NAMESPACE=$1
+    LOCATION=$2
 fi
 
 # create a namespace 
 kubectl create ns ${NAMESPACE}
 
 # Install crds 
-for f in ./deploy/crds/*.yaml ; do     
+for f in ./deploy/crds/*_crd.yaml ; do     
   
   kubectl apply -f "${f}" ; 
 
 done
 
-for f in ./deploy/resources/*.yaml ; do     
-
-  kubectl apply -f "${f}" --validate=false; 
-  
-done
-
-# Check if operator-sdk is installed or not and accordinlgy execute the commad.
-operator-sdk &> /dev/null
-if [ $? == 0 ]; then
-   operator-sdk up local  --namespace=${NAMESPACE}
+# Check if operator-sdk is installed or not and accordinlgy execute the command.
+if [ "$LOCATION" = "local" ]; then
+    operator-sdk &> /dev/null
+    if [ $? == 0 ]; then
+	operator-sdk up local  --namespace=${NAMESPACE}
+    else
+	echo "Operator SDK is not installed."
+	exit 1
+    fi
 else
-   echo "Operator SDK is not installed."
-   exit 1
+    #TODO: change the location in the container stanza of the operator yaml
+    for f in ./deploy/*.yaml ; do     
+	kubectl apply -f "${f}" --validate=false --namespace=${NAMESPACE} 
+    done
+    echo "Deployed all the operator yamls for kubefed-operator in the cluster"
 fi
+
