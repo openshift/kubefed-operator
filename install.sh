@@ -16,7 +16,7 @@ fi
 kubectl create ns ${NAMESPACE}
 
 # Install crds 
-for f in ./deploy/crds/*.yaml ; do     
+for f in ./deploy/crds/*_crd.yaml ; do     
   
   kubectl apply -f "${f}" ; 
 
