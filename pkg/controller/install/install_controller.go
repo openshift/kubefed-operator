@@ -6,7 +6,7 @@ import (
 
 	mf "github.com/jcrossley3/manifestival"
 	servingv1alpha1 "github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1"
-
+	"github.com/pmorie/kubefed-operator/version"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -123,6 +123,7 @@ func (r *ReconcileInstall) install(instance *servingv1alpha1.Install) error {
 
 	// Update status
 	instance.Status.Resources = r.config.Resources
+	instance.Status.Version = version.Version
 	if err := r.client.Status().Update(context.TODO(), instance); err != nil {
 		return err
 	}
