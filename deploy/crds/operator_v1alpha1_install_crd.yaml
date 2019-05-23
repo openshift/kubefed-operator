@@ -28,8 +28,24 @@ spec:
         metadata:
           type: object
         spec:
+          properties:
+            scope:
+              type: string
+          required:
+          - scope
           type: object
         status:
+          properties:
+            resources:
+              description: The resources applied
+              items:
+                type: object
+              type: array
+            version:
+              description: The version of the installed release
+              type: string
+          required:
+          - resources
           type: object
   version: v1alpha1
   versions:

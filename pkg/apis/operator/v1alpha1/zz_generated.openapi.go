@@ -67,7 +67,15 @@ func schema_pkg_apis_operator_v1alpha1_InstallSpec(ref common.ReferenceCallback)
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
 				Description: "InstallSpec defines the desired state of Install",
-				Properties:  map[string]spec.Schema{},
+				Properties: map[string]spec.Schema{
+					"scope": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+				},
+				Required: []string{"scope"},
 			},
 		},
 		Dependencies: []string{},
@@ -79,9 +87,32 @@ func schema_pkg_apis_operator_v1alpha1_InstallStatus(ref common.ReferenceCallbac
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
 				Description: "InstallStatus defines the observed state of Install",
-				Properties:  map[string]spec.Schema{},
+				Properties: map[string]spec.Schema{
+					"resources": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The resources applied",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("k8s.io/apimachinery/pkg/apis/meta/v1/unstructured.Unstructured"),
+									},
+								},
+							},
+						},
+					},
+					"version": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The version of the installed release",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
+				Required: []string{"resources"},
 			},
 		},
-		Dependencies: []string{},
+		Dependencies: []string{
+			"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured.Unstructured"},
 	}
 }
