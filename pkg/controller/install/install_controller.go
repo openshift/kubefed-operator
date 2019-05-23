@@ -122,7 +122,6 @@ func (r *ReconcileInstall) install(instance *servingv1alpha1.Install) error {
 	}
 
 	// Update status
-	instance.Status.Resources = r.config.Resources
 	instance.Status.Version = version.Version
 	if err := r.client.Status().Update(context.TODO(), instance); err != nil {
 		return err

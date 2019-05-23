@@ -88,19 +88,6 @@ func schema_pkg_apis_operator_v1alpha1_InstallStatus(ref common.ReferenceCallbac
 			SchemaProps: spec.SchemaProps{
 				Description: "InstallStatus defines the observed state of Install",
 				Properties: map[string]spec.Schema{
-					"resources": {
-						SchemaProps: spec.SchemaProps{
-							Description: "The resources applied",
-							Type:        []string{"array"},
-							Items: &spec.SchemaOrArray{
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Ref: ref("k8s.io/apimachinery/pkg/apis/meta/v1/unstructured.Unstructured"),
-									},
-								},
-							},
-						},
-					},
 					"version": {
 						SchemaProps: spec.SchemaProps{
 							Description: "The version of the installed release",
@@ -109,10 +96,8 @@ func schema_pkg_apis_operator_v1alpha1_InstallStatus(ref common.ReferenceCallbac
 						},
 					},
 				},
-				Required: []string{"resources"},
 			},
 		},
-		Dependencies: []string{
-			"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured.Unstructured"},
+		Dependencies: []string{},
 	}
 }
