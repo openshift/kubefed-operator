@@ -67,7 +67,15 @@ func schema_pkg_apis_operator_v1alpha1_InstallSpec(ref common.ReferenceCallback)
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
 				Description: "InstallSpec defines the desired state of Install",
-				Properties:  map[string]spec.Schema{},
+				Properties: map[string]spec.Schema{
+					"scope": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+				},
+				Required: []string{"scope"},
 			},
 		},
 		Dependencies: []string{},
@@ -79,7 +87,15 @@ func schema_pkg_apis_operator_v1alpha1_InstallStatus(ref common.ReferenceCallbac
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
 				Description: "InstallStatus defines the observed state of Install",
-				Properties:  map[string]spec.Schema{},
+				Properties: map[string]spec.Schema{
+					"version": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The version of the installed release",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
 			},
 		},
 		Dependencies: []string{},
