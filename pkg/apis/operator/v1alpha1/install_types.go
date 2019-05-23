@@ -27,6 +27,10 @@ type InstallStatus struct {
 
 	// The resources applied
 	Resources []unstructured.Unstructured `json:"resources"`
+
+	// The version of the installed release
+	// +optional
+	Version string `json:"version,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
