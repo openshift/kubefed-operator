@@ -1,8 +1,8 @@
 # kubefed-operator
 
-Prototype operator for [Kubefed](https://github.com/kubernetes-sigs/federation-v2). Planned to eventually replace the [federation-v2-operator repo](https://github.com/openshift/federation-v2-operator).
+Prototype operator for [KubeFed](https://github.com/kubernetes-sigs/federation-v2). Planned to eventually replace the [federation-v2-operator repo](https://github.com/openshift/federation-v2-operator).
 
-Note, currently, this operator only supports deploying federation in a namespace-scoped fashion.
+Note, currently, this operator only supports deploying KubeFed in a namespace-scoped fashion.
 
 ## Deploying and testing
 
