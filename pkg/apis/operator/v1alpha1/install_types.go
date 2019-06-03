@@ -41,11 +41,15 @@ type Install struct {
 	Status InstallStatus `json:"status,omitempty"`
 }
 
+// InstallationScope defines the scope of the resource being installed
+// +k8s:openapi-gen=true
 type InstallationScope string
 
 var (
-	InstallationScopeNamespaceScoped InstallationScope = "NamespaceScoped"
-	InstallationScopeClusterScoped   InstallationScope = "ClusterScoped"
+    // Namespace scoped installation scope for a resource 
+	InstallationScopeNamespaceScoped InstallationScope = "Namespaced"
+    // Cluster scoped installation scope for a resource
+	InstallationScopeClusterScoped   InstallationScope = "Cluster"
 )
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

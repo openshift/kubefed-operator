@@ -3,11 +3,11 @@ package install
 import (
 	"context"
 	"flag"
-
 	mf "github.com/jcrossley3/manifestival"
 	servingv1alpha1 "github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1"
 	"github.com/pmorie/kubefed-operator/version"
 	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
@@ -16,6 +16,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/source"
+	"strings"
 )
 
 var (
@@ -108,12 +109,109 @@ func (r *ReconcileInstall) Reconcile(request reconcile.Request) (reconcile.Resul
 	return reconcile.Result{}, nil
 }
 
+// This is a transform method that ignores clusterrole and clusterrolebinding
+// resources for namespace scoped deployment of kubefed-operator
+func resourceScopeFilter(scope servingv1alpha1.InstallationScope) mf.Transformer {
+	return func(u *unstructured.Unstructured) *unstructured.Unstructured {
+		if scope == servingv1alpha1.InstallationScopeNamespaceScoped {
+			switch strings.ToLower(u.GetKind()) {
+			case "clusterrole":
+                fallthrough
+			case "clusterrolebinding":
+				return nil
+			}
+		}
+		return u
+	}
+}
+
+// This is a transform method that updates the deployment resource's environment variables
+// by adding the federation scope env. variable for namespace scoped deployments
+func resourceEnvUpdate(scope servingv1alpha1.InstallationScope, ns, name string) mf.Transformer {
+	return func(u *unstructured.Unstructured) *unstructured.Unstructured {
+		reqLogger := log.WithValues("Instance.Namespace", ns, "Instance.Name", name)
+		if scope == servingv1alpha1.InstallationScopeNamespaceScoped {
+			switch strings.ToLower(u.GetKind()) {
+			case "deployment":
+				if containers, ok, err := unstructured.NestedSlice(u.Object,
+					"spec", "template", "spec", "containers"); ok {
+					if envs, envOk, envErr := unstructured.NestedSlice(containers[0].(map[string]interface{}), "env"); envOk {
+						if !checkEnvExists(envs, "name", "DEFAULT_FEDERATION_SCOPE") {
+							fse := map[string]interface{}{"name": "DEFAULT_FEDERATION_SCOPE", "value": "Namespaced"}
+							envs = append(envs, fse)
+						}
+						reqLogger.Info("Transforming deployment resource for environment update - env; ", "envs", envs)
+						envErr = unstructured.SetNestedSlice(containers[0].(map[string]interface{}), envs, "env")
+						if envErr != nil {
+							reqLogger.Info("Failed to update the environment")
+						}
+						err = unstructured.SetNestedSlice(u.Object, containers, "spec", "template", "spec", "containers")
+						if err != nil {
+							reqLogger.Info("Failed to update the container array")
+						}
+					} else {
+						reqLogger.Info("Failed to get the env array")
+					}
+				} else {
+					fooLogger := log.WithValues("namespace", ns, "name", name, "scope", scope, "error", err)
+					fooLogger.Info("Cannot get the nested slice for env")
+				}
+			}
+		}
+		return u
+	}
+}
+
+// This function checks if the fedearation scope environment variable exists in the env array
+func checkEnvExists(envs []interface{}, envKey, envName string) bool {
+	for _, envInterface := range envs {
+        env := envInterface.(map[string]interface{})
+		if val, ok := env[envKey]; ok {
+			if val == envName {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// This is a transform method that updates the namespace field of the clusterrolebinding resource
+// for cluster scoped deployment
+func resourceNamespaceUpdate(scope servingv1alpha1.InstallationScope, ns, name string) mf.Transformer {
+	return func(u *unstructured.Unstructured) *unstructured.Unstructured {
+		reqLogger := log.WithValues("Instance.Namespace", ns, "Instance.Name", name)
+		if scope == servingv1alpha1.InstallationScopeClusterScoped {
+			switch strings.ToLower(u.GetKind()) {
+			case "clusterrolebinding":
+				if subjects, ok, err := unstructured.NestedSlice(u.Object, "subjects"); ok {
+					err = unstructured.SetNestedField(subjects[0].(map[string]interface{}), ns, "namespace")
+					if err != nil {
+						reqLogger.Info("Failed to set the namespace nested field")
+					} else {
+						reqLogger.Info("Added the namespace to the clusterrolebinding subjects element")
+						err = unstructured.SetNestedSlice(u.Object, subjects, "subjects")
+						if err != nil {
+							reqLogger.Info("Failed to update the subjects slice")
+						}
+					}
+				} else {
+					reqLogger.Info("Failed to get subjects slice")
+				}
+			}
+		}
+		return u
+	}
+
+}
+
 // Apply the embedded resources
 func (r *ReconcileInstall) install(instance *servingv1alpha1.Install) error {
 	// Transform resources as appropriate
 	fns := []mf.Transformer{mf.InjectOwner(instance)}
 	fns = append(fns, mf.InjectNamespace(instance.Namespace))
-
+	fns = append(fns, resourceScopeFilter(instance.Spec.Scope))
+	fns = append(fns, resourceEnvUpdate(instance.Spec.Scope, instance.Namespace, instance.Name))
+	fns = append(fns, resourceNamespaceUpdate(instance.Spec.Scope, instance.Namespace, instance.Name))
 	r.config.Transform(fns...)
 
 	// Apply the resources in the YAML file

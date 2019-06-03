@@ -75,3 +75,8 @@ tags
 .vscode/*
 .history
 # End of https://www.gitignore.io/api/go,vim,emacs,visualstudiocode
+### go1.12 module files ###
+# ignore go1.12 module files for now
+go.mod
+go.sum
+# End of go 1.12 module files

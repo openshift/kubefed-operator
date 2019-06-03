@@ -38,8 +38,6 @@ spec:
             cpu: 100m
             memory: 64Mi
         env:
-        - name: DEFAULT_FEDERATION_SCOPE
-          value: Namespaced
         - name: FEDERATION_NAMESPACE
           valueFrom:
             fieldRef:

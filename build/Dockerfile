@@ -7,6 +7,8 @@ ENV OPERATOR=/usr/local/bin/kubefed-operator \
 # install operator binary
 COPY build/_output/bin/kubefed-operator ${OPERATOR}
 
+COPY deploy /deploy
+
 COPY build/bin /usr/local/bin
 RUN  /usr/local/bin/user_setup
 
