@@ -29,7 +29,7 @@ function reload-docker-daemon-cmd() {
   echo "kill -s SIGHUP ${1}"
 }
 
-function create-clusters() {
+function create-cluster() {
   local image_arg=""
   if [[ "${KIND_TAG}" ]]; then
     image_arg="--image=kindest/node:${KIND_TAG}"
@@ -66,6 +66,6 @@ function check-clusters-ready() {
 }
 
 echo "Creating a cluster"
-create-clusters
+create-cluster
 
 echo "Complete"

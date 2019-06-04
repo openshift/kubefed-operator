@@ -63,4 +63,4 @@ enable-resources
 echo "==========Teardown the infrastructure======"
 ./scripts/teardown.sh
 
-echo "Smoke testing is successfully completed."
+echo "Smoke testing is completed successfully"
