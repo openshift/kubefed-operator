@@ -3,12 +3,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    api: federation
+    api: kubefed
     kubebuilder.k8s.io: 1.0.0
-  name: federation-role
+  name: kubefed-role
 rules:
 - apiGroups:
-  - scheduling.federation.k8s.io
+  - scheduling.kubefed.k8s.io
   resources:
   - '*'
   verbs:
@@ -17,17 +17,7 @@ rules:
   - list
   - update
 - apiGroups:
-  - multiclusterdns.federation.k8s.io
-  resources:
-  - '*'
-  verbs:
-  - get
-  - watch
-  - list
-  - create
-  - update
-- apiGroups:
-  - core.federation.k8s.io
+  - multiclusterdns.kubefed.k8s.io
   resources:
   - '*'
   verbs:
@@ -37,7 +27,17 @@ rules:
   - create
   - update
 - apiGroups:
-  - types.federation.k8s.io
+  - core.kubefed.k8s.io
+  resources:
+  - '*'
+  verbs:
+  - get
+  - watch
+  - list
+  - create
+  - update
+- apiGroups:
+  - types.kubefed.k8s.io
   resources:
   - '*'
   verbs:
@@ -46,11 +46,23 @@ rules:
   - list
   - update
 - apiGroups:
-  - clusterregistry.k8s.io
+  - ""
   resources:
-  - clusters
+  - events
   verbs:
   - get
+  - create
+  - update
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    api: kubefed
+    kubebuilder.k8s.io: 1.0.0
+  name: kubefed-config-role
+rules:
 - apiGroups:
   - ""
   resources:
@@ -65,12 +77,3 @@ rules:
   - secrets
   verbs:
   - get
-- apiGroups:
-  - ""
-  resources:
-  - events
-  verbs:
-  - get
-  - create
-  - update
-  - patch

@@ -13,17 +13,17 @@ import (
 
 func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenAPIDefinition {
 	return map[string]common.OpenAPIDefinition{
-		"github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.Install":       schema_pkg_apis_operator_v1alpha1_Install(ref),
-		"github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.InstallSpec":   schema_pkg_apis_operator_v1alpha1_InstallSpec(ref),
-		"github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.InstallStatus": schema_pkg_apis_operator_v1alpha1_InstallStatus(ref),
+		"github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFed":       schema_pkg_apis_operator_v1alpha1_KubeFed(ref),
+		"github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedSpec":   schema_pkg_apis_operator_v1alpha1_KubeFedSpec(ref),
+		"github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedStatus": schema_pkg_apis_operator_v1alpha1_KubeFedStatus(ref),
 	}
 }
 
-func schema_pkg_apis_operator_v1alpha1_Install(ref common.ReferenceCallback) common.OpenAPIDefinition {
+func schema_pkg_apis_operator_v1alpha1_KubeFed(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Description: "Install is the Schema for the installs API",
+				Description: "KubeFed is the Schema for the installs API",
 				Properties: map[string]spec.Schema{
 					"kind": {
 						SchemaProps: spec.SchemaProps{
@@ -46,27 +46,27 @@ func schema_pkg_apis_operator_v1alpha1_Install(ref common.ReferenceCallback) com
 					},
 					"spec": {
 						SchemaProps: spec.SchemaProps{
-							Ref: ref("github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.InstallSpec"),
+							Ref: ref("github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedSpec"),
 						},
 					},
 					"status": {
 						SchemaProps: spec.SchemaProps{
-							Ref: ref("github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.InstallStatus"),
+							Ref: ref("github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedStatus"),
 						},
 					},
 				},
 			},
 		},
 		Dependencies: []string{
-			"github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.InstallSpec", "github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.InstallStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+			"github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedSpec", "github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
 	}
 }
 
-func schema_pkg_apis_operator_v1alpha1_InstallSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+func schema_pkg_apis_operator_v1alpha1_KubeFedSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Description: "InstallSpec defines the desired state of Install",
+				Description: "KubeFedSpec defines the desired state of KubeFed",
 				Properties: map[string]spec.Schema{
 					"scope": {
 						SchemaProps: spec.SchemaProps{
@@ -82,11 +82,11 @@ func schema_pkg_apis_operator_v1alpha1_InstallSpec(ref common.ReferenceCallback)
 	}
 }
 
-func schema_pkg_apis_operator_v1alpha1_InstallStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
+func schema_pkg_apis_operator_v1alpha1_KubeFedStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Description: "InstallStatus defines the observed state of Install",
+				Description: "KubeFedStatus defines the observed state of KubeFed",
 				Properties: map[string]spec.Schema{
 					"version": {
 						SchemaProps: spec.SchemaProps{

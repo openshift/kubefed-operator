@@ -7,7 +7,7 @@ metadata:
   creationTimestamp: null
   labels:
     controller-tools.k8s.io: "1.0"
-  name: federatedclusters.core.federation.k8s.io
+  name: kubefedclusters.core.kubefed.k8s.io
 spec:
   additionalPrinterColumns:
   - JSONPath: .status.conditions[?(@.type=='Ready')].status
@@ -16,10 +16,10 @@ spec:
   - JSONPath: .metadata.creationTimestamp
     name: age
     type: date
-  group: core.federation.k8s.io
+  group: core.kubefed.k8s.io
   names:
-    kind: FederatedCluster
-    plural: federatedclusters
+    kind: KubeFedCluster
+    plural: kubefedclusters
   scope: Namespaced
   subresources:
     status: {}
@@ -40,26 +40,18 @@ spec:
           type: object
         spec:
           properties:
-            clusterRef:
-              description: Name of the cluster registry Cluster resource from which
-                to source api endpoints. TODO(marun) should this go away in favor
-                of a 1:1 mapping?
-              properties:
-                name:
-                  description: Name of the cluster registry Cluster resource from
-                    which to source API endpoints.
-                  type: string
-              required:
-              - name
-              type: object
+            apiEndpoint:
+              description: The API endpoint of the member cluster. This can be a hostname,
+                hostname:port, IP or IP:port.
+              type: string
+            caBundle:
+              description: CABundle contains the certificate authority information.
+              format: byte
+              type: string
             secretRef:
-              description: Name of the secret containing kubeconfig to access the
-                referenced cluster.  Admin needs to ensure that the required secret
-                exists. Secret should be in the same namespace where federation control
-                plane is hosted and it should have kubeconfig in its data with key
-                "kubeconfig".  This will later be changed to a reference to secret
-                in federation control plane when the federation control plane supports
-                secrets.  This can be left empty if the cluster allows insecure access.
+              description: Name of the secret containing the token required to access
+                the member cluster. The secret needs to exist in the same namespace
+                as the control plane and should have a "token" key.
               properties:
                 name:
                   description: Name of a secret within the enclosing namespace
@@ -67,6 +59,9 @@ spec:
               required:
               - name
               type: object
+          required:
+          - apiEndpoint
+          - secretRef
           type: object
         status:
           properties:
@@ -99,6 +94,7 @@ spec:
                 required:
                 - type
                 - status
+                - lastProbeTime
                 type: object
               type: array
             region:
@@ -111,8 +107,10 @@ spec:
               items:
                 type: string
               type: array
+          required:
+          - conditions
           type: object
-  version: v1alpha1
+  version: v1beta1
 status:
   acceptedNames:
     kind: ""

@@ -7,9 +7,9 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// InstallSpec defines the desired state of Install
+// KubeFedSpec defines the desired state of KubeFed
 // +k8s:openapi-gen=true
-type InstallSpec struct {
+type KubeFedSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book.kubebuilder.io/beyond_basics/generating_crd.html
@@ -17,9 +17,9 @@ type InstallSpec struct {
 	Scope InstallationScope `json:"scope"`
 }
 
-// InstallStatus defines the observed state of Install
+// KubeFedStatus defines the observed state of KubeFed
 // +k8s:openapi-gen=true
-type InstallStatus struct {
+type KubeFedStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book.kubebuilder.io/beyond_basics/generating_crd.html
@@ -31,14 +31,14 @@ type InstallStatus struct {
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// Install is the Schema for the installs API
+// KubeFed is the Schema for the installs API
 // +k8s:openapi-gen=true
-type Install struct {
+type KubeFed struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   InstallSpec   `json:"spec,omitempty"`
-	Status InstallStatus `json:"status,omitempty"`
+	Spec   KubeFedSpec   `json:"spec,omitempty"`
+	Status KubeFedStatus `json:"status,omitempty"`
 }
 
 // InstallationScope defines the scope of the resource being installed
@@ -46,21 +46,21 @@ type Install struct {
 type InstallationScope string
 
 var (
-    // Namespace scoped installation scope for a resource 
+	// InstallationScopeNamespaceScoped defines Namespace scoped installation scope for a resource
 	InstallationScopeNamespaceScoped InstallationScope = "Namespaced"
-    // Cluster scoped installation scope for a resource
-	InstallationScopeClusterScoped   InstallationScope = "Cluster"
+	// InstallationScopeClusterScoped defines Cluster scoped installation scope for a resource
+	InstallationScopeClusterScoped InstallationScope = "Cluster"
 )
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// InstallList contains a list of Install
-type InstallList struct {
+// KubeFedList contains a list of KubeFed
+type KubeFedList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Install `json:"items"`
+	Items           []KubeFed `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&Install{}, &InstallList{})
+	SchemeBuilder.Register(&KubeFed{}, &KubeFedList{})
 }

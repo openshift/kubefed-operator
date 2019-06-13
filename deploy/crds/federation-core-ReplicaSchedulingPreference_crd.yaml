@@ -7,9 +7,9 @@ metadata:
   creationTimestamp: null
   labels:
     controller-tools.k8s.io: "1.0"
-  name: replicaschedulingpreferences.scheduling.federation.k8s.io
+  name: replicaschedulingpreferences.scheduling.kubefed.k8s.io
 spec:
-  group: scheduling.federation.k8s.io
+  group: scheduling.kubefed.k8s.io
   names:
     kind: ReplicaSchedulingPreference
     plural: replicaschedulingpreferences

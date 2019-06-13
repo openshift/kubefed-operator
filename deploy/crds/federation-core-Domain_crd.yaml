@@ -7,9 +7,9 @@ metadata:
   creationTimestamp: null
   labels:
     controller-tools.k8s.io: "1.0"
-  name: domains.multiclusterdns.federation.k8s.io
+  name: domains.multiclusterdns.kubefed.k8s.io
 spec:
-  group: multiclusterdns.federation.k8s.io
+  group: multiclusterdns.kubefed.k8s.io
   names:
     kind: Domain
     plural: domains

@@ -2,7 +2,7 @@
 
 # This script will create a namespace and deploy all the crds within the same
 # namespace
-# usage ./install.sh <location> <namespace>
+# usage ./install.sh -n <namespace> -d <location>
 
 set -e
  
@@ -10,16 +10,22 @@ set -e
 NAMESPACE=""
 LOCATION=""
 NAMESPACE_STR=""
+OLM_VERSION="0.10.0"
+OPERATOR="kubefed-operator"
+IMAGE_NAME=""
+OPERATOR_YAML_PATH="./deploy/operator.yaml"
 
-while getopts “n:d:” opt; do
+while getopts “n:d:i:” opt; do
     case $opt in
 	n) NAMESPACE=$OPTARG ;;
 	d) LOCATION=$OPTARG ;;
+    i) IMAGE_NAME=$OPTARG ;;
     esac
 done
 
 echo "NS=$NAMESPACE"
 echo "LOC=$LOCATION"
+echo "Operator Image Name=$IMAGE_NAME"
 
 if test X"$NAMESPACE" != X; then
     # create a namespace 
@@ -27,71 +33,48 @@ if test X"$NAMESPACE" != X; then
     NAMESPACE_STR="--namespace=${NAMESPACE}"
 fi
 
-# Install crds 
-kubectl apply -f ./deploy/crds/operator_v1alpha1_install_crd.yaml
+# Install CRD
+kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefed_crd.yaml
 
 # Install CR
-kubectl apply -f ./deploy/crds/operator_v1alpha1_install_cr.yaml $NAMESPACE_STR
+kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefed_cr.yaml $NAMESPACE_STR
 
 # Check if operator-sdk is installed or not and accordinlgy execute the command.
 if test X"$LOCATION" = Xlocal; then
-    operator-sdk &> /dev/null
-    if [ $? == 0 ]; then
-    # operator-sdk up local command doesn't install the requried CRD's
-    for f in ./deploy/crds/*_crd.yaml ; do     
-	kubectl apply -f "${f}" --validate=false 
-    done
-	operator-sdk up local $NAMESPACE_STR &
+  operator-sdk &> /dev/null
+  if [ $? == 0 ]; then
+  # operator-sdk up local command doesn't install the requried CRD's
+  for f in ./deploy/crds/*_crd.yaml ; do     
+	  kubectl apply -f "${f}" --validate=false 
+  done
+	    operator-sdk up local $NAMESPACE_STR &
+  else
+	    echo "Operator SDK is not installed."
+	    exit 1
+  fi
+elif test X"$LOCATION" = Xcluster; then
+  #TODO: change the location in the container stanza of the operator yaml
+  for f in ./deploy/*.yaml ; do
+   if test X"$OPERATOR_YAML_PATH" = X"$f" ; then
+      echo "Reading the image name and sed it in"
+      sed "/image: /s|: .*|: ${IMAGE_NAME}|" $f | kubectl apply $NAMESPACE_STR --validate=false -f -
     else
-	echo "Operator SDK is not installed."
-	exit 1
+      kubectl apply -f "${f}" --validate=false $NAMESPACE_STR
     fi
-elif test X"$LOCATION" = Xapply; then
-    #TODO: change the location in the container stanza of the operator yaml
-    for f in ./deploy/crds/*_crd.yaml ; do     
-	kubectl apply -f "${f}" --validate=false 
-    done
-    echo "Deployed all the operator yamls for kubefed-operator in the cluster"
+  done
+  for f in ./deploy/crds/*_crd.yaml ; do     
+	  kubectl apply -f "${f}" --validate=false 
+  done
+  echo "Deployed all the operator yamls for kubefed-operator in the cluster"
+
 elif test X"$LOCATION" = Xolm-kube; then
+./scripts/kubernetes/olm-install.sh ${OLM_VERSION}
 
-kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.0/crds.yaml
-
-kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.0/olm.yaml
-
-echo "OLM is deployed in the cluster"
+    echo "OLM is deployed in the cluster"
  
-./hack/catalog.sh | kubectl apply $NAMESPACE_STR -f -
+    ./hack/catalog.sh | kubectl apply $NAMESPACE_STR -f -
 
-cat <<-EOF | kubectl apply -f -
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ${NAMESPACE}
----
-apiVersion: operators.coreos.com/v1
-kind: OperatorGroup
-metadata:
-  name: kubefed
-  namespace: ${NAMESPACE}
----
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
-  name: kubefed-operator-sub
-  generateName: kubefed-operator-
-  namespace: ${NAMESPACE}
-spec:
-  source: kubefed-operator
-  sourceNamespace: ${NAMESPACE}
-  name: kubefed-operator
-  channel: alpha
-EOF
-elif test X"$LOCATION" = Xolm-openshift; then
-
-./hack/catalog.sh | oc apply $NAMESPACE_STR -f -
-
-cat <<-EOF | kubectl apply -f -
+    cat <<-EOF | kubectl apply -f -
 ---
 apiVersion: v1
 kind: Namespace
@@ -110,13 +93,45 @@ spec:
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
-  name: kubefed-operator-sub
-  generateName: kubefed-operator-
+  name: ${OPERATOR}-sub
+  generateName: ${OPERATOR}-
   namespace: ${NAMESPACE}
 spec:
-  source: kubefed-operator
+  source: ${OPERATOR}
   sourceNamespace: ${NAMESPACE}
-  name: kubefed-operator
+  name: ${OPERATOR}
+  channel: alpha
+EOF
+    
+elif test X"$LOCATION" = Xolm-openshift; then
+    ./hack/catalog.sh | oc apply $NAMESPACE_STR -f -
+
+    cat <<-EOF | kubectl apply -f -
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ${NAMESPACE}
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: kubefed
+  namespace: ${NAMESPACE}
+spec:
+ targetNamespaces:
+   - ${NAMESPACE}
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: ${OPERATOR}-sub
+  generateName: ${OPERATOR}-
+  namespace: ${NAMESPACE}
+spec:
+  source: ${OPERATOR}
+  sourceNamespace: ${NAMESPACE}
+  name: ${OPERATOR}
   channel: alpha
 EOF
    

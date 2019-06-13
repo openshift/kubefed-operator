@@ -7,9 +7,9 @@ metadata:
   creationTimestamp: null
   labels:
     controller-tools.k8s.io: "1.0"
-  name: clusterpropagatedversions.core.federation.k8s.io
+  name: clusterpropagatedversions.core.kubefed.k8s.io
 spec:
-  group: core.federation.k8s.io
+  group: core.kubefed.k8s.io
   names:
     kind: ClusterPropagatedVersion
     plural: clusterpropagatedversions

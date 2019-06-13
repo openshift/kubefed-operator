@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: federation-controller-manager
+  name: kubefed-controller-manager
   labels:
     control-plane: controller-manager
     controller-tools.k8s.io: "1.0"
@@ -19,17 +19,24 @@ spec:
         control-plane: controller-manager
         controller-tools.k8s.io: "1.0"
     spec:
-      serviceAccountName: federation-controller
+      serviceAccountName: kubefed-controller
       containers:
       - args:
-        - --federation-namespace=$(FEDERATION_NAMESPACE)
+        - --kubefed-namespace=$(KUBEFED_NAMESPACE)
         - -v=5
         - --logtostderr
         command:
-        - /root/controller-manager
-        image: "quay.io/kubernetes-multicluster/federation-v2:v0.0.10"
+        - /hyperfed/controller-manager
+        image: quay.io/anbhat/kubefed:v0.1.0-rc2-PR971
         imagePullPolicy: Always
         name: controller-manager
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 3
+          timeoutSeconds: 3
         resources:
           limits:
             cpu: 100m
@@ -38,7 +45,7 @@ spec:
             cpu: 100m
             memory: 64Mi
         env:
-        - name: FEDERATION_NAMESPACE
+        - name: KUBEFED_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace

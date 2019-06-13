@@ -7,12 +7,12 @@ metadata:
   creationTimestamp: null
   labels:
     controller-tools.k8s.io: "1.0"
-  name: federationconfigs.core.federation.k8s.io
+  name: domains.multiclusterdns.kubefed.k8s.io
 spec:
-  group: core.federation.k8s.io
+  group: multiclusterdns.kubefed.k8s.io
   names:
-    kind: FederationConfig
-    plural: federationconfigs
+    kind: Domain
+    plural: domains
   scope: Namespaced
   validation:
     openAPIV3Schema:
@@ -22,6 +22,9 @@ spec:
             of an object. Servers should convert recognized schemas to the latest
             internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
           type: string
+        domain:
+          description: Domain is the DNS zone associated with the federation
+          type: string
         kind:
           description: 'Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
@@ -29,14 +32,12 @@ spec:
           type: string
         metadata:
           type: object
-        spec:
-          properties:
-            scope:
-              description: The scope of the federation control plane should be either
-                `Namespaced` or `Cluster`. `Namespaced` indicates that the federation
-                namespace will be the only target for federation.
-              type: string
-          type: object
+        nameServer:
+          description: NameServer is the authoritative DNS name server for the federation
+            domain
+          type: string
+      required:
+      - domain
   version: v1alpha1
 status:
   acceptedNames:

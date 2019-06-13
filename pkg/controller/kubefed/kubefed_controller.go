@@ -1,10 +1,12 @@
-package install
+package kubefed
 
 import (
 	"context"
 	"flag"
+	"strings"
+
 	mf "github.com/jcrossley3/manifestival"
-	servingv1alpha1 "github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1"
+	kubefedv1alpha1 "github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1"
 	"github.com/pmorie/kubefed-operator/version"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -16,7 +18,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/source"
-	"strings"
 )
 
 var (
@@ -26,10 +27,10 @@ var (
 		"If filename is a directory, process all manifests recursively")
 	namespace = flag.String("namespace", "",
 		"Overrides namespace in manifest (env vars resolved in-container)")
-	log = logf.Log.WithName("controller_install")
+	log = logf.Log.WithName("controller_kubefed")
 )
 
-// Add creates a new Install Controller and adds it to the Manager. The Manager will set fields on the Controller
+// Add creates a new KubeFed Controller and adds it to the Manager. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
 func Add(mgr manager.Manager) error {
 	manifest, err := mf.NewManifest(*filename, *recursive, mgr.GetClient())
@@ -41,19 +42,19 @@ func Add(mgr manager.Manager) error {
 
 // newReconciler returns a new reconcile.Reconciler
 func newReconciler(mgr manager.Manager, man mf.Manifest) reconcile.Reconciler {
-	return &ReconcileInstall{client: mgr.GetClient(), scheme: mgr.GetScheme(), config: man}
+	return &ReconcileKubeFed{client: mgr.GetClient(), scheme: mgr.GetScheme(), config: man}
 }
 
 // add adds a new Controller to mgr with r as the reconcile.Reconciler
 func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	// Create a new controller
-	c, err := controller.New("install-controller", mgr, controller.Options{Reconciler: r})
+	c, err := controller.New("kubefed-controller", mgr, controller.Options{Reconciler: r})
 	if err != nil {
 		return err
 	}
 
-	// Watch for changes to primary resource Install
-	err = c.Watch(&source.Kind{Type: &servingv1alpha1.Install{}}, &handler.EnqueueRequestForObject{})
+	// Watch for changes to primary resource KubeFed
+	err = c.Watch(&source.Kind{Type: &kubefedv1alpha1.KubeFed{}}, &handler.EnqueueRequestForObject{})
 	if err != nil {
 		return err
 	}
@@ -61,10 +62,10 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	return nil
 }
 
-var _ reconcile.Reconciler = &ReconcileInstall{}
+var _ reconcile.Reconciler = &ReconcileKubeFed{}
 
-// ReconcileInstall reconciles a Install object
-type ReconcileInstall struct {
+// ReconcileKubeFed reconciles a KubeFed object
+type ReconcileKubeFed struct {
 	// This client, initialized using mgr.Client() above, is a split client
 	// that reads objects from the cache and writes to the apiserver
 	client client.Client
@@ -72,17 +73,17 @@ type ReconcileInstall struct {
 	config mf.Manifest
 }
 
-// Reconcile reads that state of the cluster for a Install object and makes changes based on the state read
-// and what is in the Install.Spec
+// Reconcile reads that state of the cluster for a KubeFed object and makes changes based on the state read
+// and what is in the KubeFed.Spec
 // Note:
 // The Controller will requeue the Request to be processed again if the returned error is non-nil or
 // Result.Requeue is true, otherwise upon completion it will remove the work from the queue.
-func (r *ReconcileInstall) Reconcile(request reconcile.Request) (reconcile.Result, error) {
+func (r *ReconcileKubeFed) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	reqLogger := log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
-	reqLogger.Info("Reconciling Install")
+	reqLogger.Info("Reconciling KubeFed")
 
-	// Fetch the Install instance
-	instance := &servingv1alpha1.Install{}
+	// Fetch the KubeFed instance
+	instance := &kubefedv1alpha1.KubeFed{}
 	err := r.client.Get(context.TODO(), request.NamespacedName, instance)
 	if err != nil {
 		if errors.IsNotFound(err) {
@@ -93,7 +94,7 @@ func (r *ReconcileInstall) Reconcile(request reconcile.Request) (reconcile.Resul
 		return reconcile.Result{}, err
 	}
 
-	stages := []func(*servingv1alpha1.Install) error{
+	stages := []func(*kubefedv1alpha1.KubeFed) error{
 		r.install,
 		r.configure,
 	}
@@ -104,40 +105,47 @@ func (r *ReconcileInstall) Reconcile(request reconcile.Request) (reconcile.Resul
 		}
 	}
 
-	reqLogger.Info("Finished reconciling install")
+	reqLogger.Info("Finished reconciling kubefed")
 
 	return reconcile.Result{}, nil
 }
 
 // This is a transform method that ignores clusterrole and clusterrolebinding
 // resources for namespace scoped deployment of kubefed-operator
-func resourceScopeFilter(scope servingv1alpha1.InstallationScope) mf.Transformer {
-	return func(u *unstructured.Unstructured) *unstructured.Unstructured {
-		if scope == servingv1alpha1.InstallationScopeNamespaceScoped {
-			switch strings.ToLower(u.GetKind()) {
-			case "clusterrole":
-                fallthrough
-			case "clusterrolebinding":
-				return nil
-			}
-		}
-		return u
+func resourceScopeFilter(resources []unstructured.Unstructured, scope kubefedv1alpha1.InstallationScope) []unstructured.Unstructured {
+	if scope != kubefedv1alpha1.InstallationScopeNamespaceScoped {
+		return resources
 	}
+
+	filtered := []unstructured.Unstructured{}
+
+	for i := range resources {
+		switch strings.ToLower(resources[i].GetKind()) {
+		case "clusterrole":
+			fallthrough
+		case "clusterrolebinding":
+			continue
+		default:
+			filtered = append(filtered, resources[i])
+		}
+	}
+
+	return filtered
 }
 
 // This is a transform method that updates the deployment resource's environment variables
 // by adding the federation scope env. variable for namespace scoped deployments
-func resourceEnvUpdate(scope servingv1alpha1.InstallationScope, ns, name string) mf.Transformer {
-	return func(u *unstructured.Unstructured) *unstructured.Unstructured {
+func resourceEnvUpdate(scope kubefedv1alpha1.InstallationScope, ns, name string) mf.Transformer {
+	return func(u *unstructured.Unstructured) error {
 		reqLogger := log.WithValues("Instance.Namespace", ns, "Instance.Name", name)
-		if scope == servingv1alpha1.InstallationScopeNamespaceScoped {
+		if scope == kubefedv1alpha1.InstallationScopeNamespaceScoped {
 			switch strings.ToLower(u.GetKind()) {
 			case "deployment":
 				if containers, ok, err := unstructured.NestedSlice(u.Object,
 					"spec", "template", "spec", "containers"); ok {
 					if envs, envOk, envErr := unstructured.NestedSlice(containers[0].(map[string]interface{}), "env"); envOk {
-						if !checkEnvExists(envs, "name", "DEFAULT_FEDERATION_SCOPE") {
-							fse := map[string]interface{}{"name": "DEFAULT_FEDERATION_SCOPE", "value": "Namespaced"}
+						if !checkEnvExists(envs, "name", "DEFAULT_KUBEFED_SCOPE") {
+							fse := map[string]interface{}{"name": "DEFAULT_KUBEFED_SCOPE", "value": "Namespaced"}
 							envs = append(envs, fse)
 						}
 						reqLogger.Info("Transforming deployment resource for environment update - env; ", "envs", envs)
@@ -158,14 +166,14 @@ func resourceEnvUpdate(scope servingv1alpha1.InstallationScope, ns, name string)
 				}
 			}
 		}
-		return u
+		return nil
 	}
 }
 
 // This function checks if the fedearation scope environment variable exists in the env array
 func checkEnvExists(envs []interface{}, envKey, envName string) bool {
 	for _, envInterface := range envs {
-        env := envInterface.(map[string]interface{})
+		env := envInterface.(map[string]interface{})
 		if val, ok := env[envKey]; ok {
 			if val == envName {
 				return true
@@ -177,10 +185,10 @@ func checkEnvExists(envs []interface{}, envKey, envName string) bool {
 
 // This is a transform method that updates the namespace field of the clusterrolebinding resource
 // for cluster scoped deployment
-func resourceNamespaceUpdate(scope servingv1alpha1.InstallationScope, ns, name string) mf.Transformer {
-	return func(u *unstructured.Unstructured) *unstructured.Unstructured {
+func resourceNamespaceUpdate(scope kubefedv1alpha1.InstallationScope, ns, name string) mf.Transformer {
+	return func(u *unstructured.Unstructured) error {
 		reqLogger := log.WithValues("Instance.Namespace", ns, "Instance.Name", name)
-		if scope == servingv1alpha1.InstallationScopeClusterScoped {
+		if scope == kubefedv1alpha1.InstallationScopeClusterScoped {
 			switch strings.ToLower(u.GetKind()) {
 			case "clusterrolebinding":
 				if subjects, ok, err := unstructured.NestedSlice(u.Object, "subjects"); ok {
@@ -199,17 +207,19 @@ func resourceNamespaceUpdate(scope servingv1alpha1.InstallationScope, ns, name s
 				}
 			}
 		}
-		return u
+		return nil
 	}
 
 }
 
 // Apply the embedded resources
-func (r *ReconcileInstall) install(instance *servingv1alpha1.Install) error {
+func (r *ReconcileKubeFed) install(instance *kubefedv1alpha1.KubeFed) error {
+	// filter out resources we don't want
+	filteredResources := resourceScopeFilter(r.config.Resources, instance.Spec.Scope)
+	r.config.Resources = filteredResources
 	// Transform resources as appropriate
 	fns := []mf.Transformer{mf.InjectOwner(instance)}
 	fns = append(fns, mf.InjectNamespace(instance.Namespace))
-	fns = append(fns, resourceScopeFilter(instance.Spec.Scope))
 	fns = append(fns, resourceEnvUpdate(instance.Spec.Scope, instance.Namespace, instance.Name))
 	fns = append(fns, resourceNamespaceUpdate(instance.Spec.Scope, instance.Namespace, instance.Name))
 	r.config.Transform(fns...)
@@ -227,7 +237,7 @@ func (r *ReconcileInstall) install(instance *servingv1alpha1.Install) error {
 	return nil
 }
 
-// Set ConfigMap values from Install spec
-func (r *ReconcileInstall) configure(instance *servingv1alpha1.Install) error {
+// Set ConfigMap values from KubeFed spec
+func (r *ReconcileKubeFed) configure(instance *kubefedv1alpha1.KubeFed) error {
 	return nil
 }
