@@ -27,7 +27,7 @@ function setup-infrastructure () {
   
   ./scripts/install-kubefed.sh -n ${NAMESPACE} -d ${LOCATION} -i ${IMAGE_NAME} -s ${SCOPE} &
 
-  retries=70
+  retries=100
   until [[ $retries == 0 || $name == "kubefed" ]]; do
     name=$(kubectl get kubefedconfig -n ${NAMESPACE} -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)
     if [[ $name != "kubefed" ]]; then
@@ -79,7 +79,7 @@ spec:
 EOF
 
 # check for a FederatedConfigMap name
-retries=70
+retries=100
 until [[ $retries == 0 || $CONFIGMAP == "test-configmap" ]]; do
   CONFIGMAP=$(kubectl get configmap -n ${NAMESPACE} -o jsonpath='{.items[1].metadata.name}' 2>/dev/null)
   if [[ $CONFIGMAP != "test-configmap" ]]; then
@@ -113,7 +113,7 @@ spec:
    - name: cluster1
 EOF
 # check for a FederatedStorageClass name
-retries=70
+retries=100
 until [[ $retries == 0 || $STORAGECLASS == "test-storageclass" ]]; do
   STORAGECLASS=$(kubectl get storageclass -o jsonpath='{.items[1].metadata.name}' 2>/dev/null)
   if [[ $STORAGECLASS != "test-storageclass" ]]; then
