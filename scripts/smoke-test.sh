@@ -1,14 +1,31 @@
 #!/bin/bash
 
-NAMESPACE="${NAMESPACE:-kubefed-test}"
+#Default values
+NAMESPACE="${NAMESPACE:-default}"
 LOCATION="${LOCATION:-local}"
 VERSION="${VERSION:-v0.1.0-rc2}"
+IMAGE_NAME="${IMAGE_NAME:-quay.io/sohankunkerkar/kubefed-operator:v0.1.0}"
+SCOPE="${SCOPE:-Namespaced}"
+while getopts “n:d:i:s:” opt; do
+    case $opt in
+	n) NAMESPACE=$OPTARG ;;
+	d) LOCATION=$OPTARG ;;
+  i) IMAGE_NAME=$OPTARG ;;
+  s) SCOPE=$OPTARG;;
+    esac
+done
+echo "NS=$NAMESPACE"
+echo "LOC=$LOCATION"
+echo "Operator Image Name=$IMAGE_NAME"
+echo "Scope=$SCOPE"
 
 function setup-infrastructure () {
 
-  ./scripts/create-cluster.sh
+   if test X"$LOCATION" != Xolm-openshift; then
+      ./scripts/create-cluster.sh
+   fi
   
-  ./scripts/install-kubefed.sh -n ${NAMESPACE} -d ${LOCATION} -i ${IMAGE_NAME} &
+  ./scripts/install-kubefed.sh -n ${NAMESPACE} -d ${LOCATION} -i ${IMAGE_NAME} -s ${SCOPE} &
 
   retries=70
   until [[ $retries == 0 || $name == "kubefed" ]]; do
@@ -25,21 +42,26 @@ function setup-infrastructure () {
     exit 1
   fi
 
- #./scripts/download-binaries.sh
+  #./scripts/download-binaries.sh
   
 }
 
 function enable-resources () {
 
-echo "Performing join operation using kubefedctl"
+if test X"$LOCATION" = Xolm-openshift; then
+  # renaming context for openshift cluster to consumable format
+  oc config rename-context $(oc config current-context) cluster1
+fi
+
+echo "Performing the join operation on cluster1"
 kubefedctl join cluster1 --kubefed-namespace=${NAMESPACE} --host-cluster-context=cluster1 --host-cluster-name=cluster1 --cluster-context=cluster1
 
 echo "Enable FederatedTypeconfigs"
 kubefedctl enable namespaces --kubefed-namespace=${NAMESPACE}
 
+if test X"$SCOPE" != XCluster; then
 kubefedctl enable configmaps --kubefed-namespace=${NAMESPACE}
-
-echo "Creating test-configmap resource"
+echo "Creating a FederatedConfigMap resource"
 
 cat <<EOF | kubectl --namespace=${NAMESPACE} apply -f -
 apiVersion: types.kubefed.k8s.io/v1beta1
@@ -56,11 +78,11 @@ spec:
     - name: cluster1
 EOF
 
-# check for test-configmap name
+# check for a FederatedConfigMap name
 retries=70
-until [[ $retries == 0 || $name == "test-configmap" ]]; do
-  name=$(kubectl get configmap -n ${NAMESPACE} -o jsonpath='{.items[1].metadata.name}' 2>/dev/null)
-  if [[ $name != "test-configmap" ]]; then
+until [[ $retries == 0 || $CONFIGMAP == "test-configmap" ]]; do
+  CONFIGMAP=$(kubectl get configmap -n ${NAMESPACE} -o jsonpath='{.items[1].metadata.name}' 2>/dev/null)
+  if [[ $CONFIGMAP != "test-configmap" ]]; then
       echo "Waiting for test-configmap to appear"
       sleep 1
       retries=$((retries - 1))
@@ -72,18 +94,53 @@ done
     exit 1
  fi
 
- echo "Configmap resource is federated successfully"
+ echo "The configmap resource is federated successfully"
+
+else
+kubefedctl enable storageclass --kubefed-namespace=${NAMESPACE}
+echo "Creating a FederatedStorageClass resource"
+cat <<EOF | kubectl apply -f -
+apiVersion: types.kubefed.k8s.io/v1beta1                                                                                                                                                      
+kind: FederatedStorageClass                                                                                                                                                                    
+metadata:                                                                                                                                                                                      
+ name: test-storageclass                                                                                                                                                                      
+spec:                                                                                                                                                                                          
+ template:                                                                                                                                                                                    
+   provisioner: local                                                                                                                                                                        
+   reclaimPolicy: Retain                                                                                                                                                                      
+ placement:                                                                                                                                                                                  
+   clusters:                                                                                                                                                                                  
+   - name: cluster1
+EOF
+# check for a FederatedStorageClass name
+retries=70
+until [[ $retries == 0 || $STORAGECLASS == "test-storageclass" ]]; do
+  STORAGECLASS=$(kubectl get storageclass -o jsonpath='{.items[1].metadata.name}' 2>/dev/null)
+  if [[ $STORAGECLASS != "test-storageclass" ]]; then
+      echo "Waiting for test-storageclass to appear"
+      sleep 1
+      retries=$((retries - 1))
+  fi
+done
+
+ if [ $retries == 0 ]; then
+    echo "Failed to retrieve test-storageclass resource"
+    exit 1
+ fi
+
+ echo "The storageclass resource is federated successfully"
+fi
 
 }
 
 
-echo "==========Setting up the infrastructure for kubefed operator============="
+echo "==========Setting up the infrastructure for kubefed-operator============="
 setup-infrastructure
 
 echo "==========Enabling resources=============="
 enable-resources
 
 echo "==========Teardown the infrastructure======"
-./scripts/teardown.sh
+./scripts/teardown.sh -n ${NAMESPACE} -d ${LOCATION}
 
-echo "Smoke testing is completed successfully"
+echo "The smoke testing is completed successfully for the ${SCOPE}-scoped deployment"
