@@ -15,7 +15,7 @@ The operator SDK provides a way to run your operator locally outside a cluster. 
 All you need to do is run the following command from the root directory of this project:
 
 ```
-$ operator-sdk up local --namespace=federation-test
+$ operator-sdk up local --namespace=kubefed-test
 ```
 
 This will run the operator configured to watch the `kubefed-test` namespace.
