@@ -40,7 +40,7 @@ spec:
       displayName: FederatedServiceStatus
       kind: FederatedServiceStatus
       name: federatedservicestatuses.core.kubefed.k8s.io
-      version: v1alpha1
+      version: v1beta1
     - description: FederatedTypeConfig programs kubefed to know about a single API
         type - the "target type" - that a user wants to federate.
       displayName: FederatedTypeConfig
@@ -82,7 +82,7 @@ spec:
       displayName: KubeFed
       kind: KubeFed
       name: kubefeds.operator.kubefed.io
-      version: v1beta1
+      version: v1alpha1
   description: "Kubernetes Federation is a tool to sync (aka \"federate\") a set of
     Kubernetes\nobjects from a \"source\" into a set of other clusters. Common use-cases\ninclude
     federating Namespaces across all of your clusters or rolling out an\napplication
@@ -373,7 +373,7 @@ spec:
   maintainers:
   - email: kubefed-operator@redhat.com
     name: Kubefed Team
-  maturity: beta
+  maturity: alpha
   provider:
     name: Red Hat
   version: 0.1.0
