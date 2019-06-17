@@ -16,11 +16,7 @@ spec:
       containers:
         - name: kubefed-operator
           # Replace this with the built image name
-<<<<<<< HEAD
           image: quay.io/sohankunkerkar/kubefed-operator:v0.1.0
-=======
-          image: quay.io/anbhat/kubefed-operator:v0.1.0
->>>>>>> 2c0699ea24d52167ee6738a63c9bfa2fa603e4d8
           command:
           - kubefed-operator
           imagePullPolicy: Always
