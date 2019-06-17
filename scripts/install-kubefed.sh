@@ -47,10 +47,10 @@ if test X"$LOCATION" = Xlocal; then
   for f in ./deploy/crds/*_crd.yaml ; do     
 	  kubectl apply -f "${f}" --validate=false 
   done
-	    operator-sdk up local $NAMESPACE_STR &
+      operator-sdk up local $NAMESPACE_STR &
   else
-	    echo "Operator SDK is not installed."
-	    exit 1
+	  echo "Operator SDK is not installed."
+	  exit 1
   fi
 elif test X"$LOCATION" = Xcluster; then
   #TODO: change the location in the container stanza of the operator yaml
@@ -68,7 +68,7 @@ elif test X"$LOCATION" = Xcluster; then
   echo "Deployed all the operator yamls for kubefed-operator in the cluster"
 
 elif test X"$LOCATION" = Xolm-kube; then
-./scripts/kubernetes/olm-install.sh ${OLM_VERSION}
+    ./scripts/kubernetes/olm-install.sh ${OLM_VERSION}
 
     echo "OLM is deployed in the cluster"
  
