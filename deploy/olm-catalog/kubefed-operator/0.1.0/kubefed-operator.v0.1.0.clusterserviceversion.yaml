@@ -40,13 +40,13 @@ spec:
       displayName: FederatedServiceStatus
       kind: FederatedServiceStatus
       name: federatedservicestatuses.core.kubefed.k8s.io
-      version: v1beta1
+      version: v1alpha1
     - description: FederatedTypeConfig programs kubefed to know about a single API
         type - the "target type" - that a user wants to federate.
       displayName: FederatedTypeConfig
       kind: FederatedTypeConfig
       name: federatedtypeconfigs.core.kubefed.k8s.io
-      version: v1beta1
+      version: v1alpha1
     - description: IngressDNSRecord
       displayName: IngressDNSRecord
       kind: IngressDNSRecord
