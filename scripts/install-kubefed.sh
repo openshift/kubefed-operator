@@ -151,5 +151,7 @@ spec:
   name: ${OPERATOR}
   channel: alpha
 EOF
-   
+else
+  echo "Please enter the valid location"
+  exit 1
 fi
