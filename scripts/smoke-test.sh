@@ -21,16 +21,18 @@ echo "Scope=$SCOPE"
 
 function setup-infrastructure () {
 
-   if test X"$LOCATION" != Xolm-openshift; then
+   if [[ "$LOCATION" != "olm-openshift" && "$LOCATION" != "olm-kube" ]]; then
       ./scripts/create-cluster.sh
+   elif test X"$LOCATION" = Xolm-kube; then
+       minikube start
    fi
   
   ./scripts/install-kubefed.sh -n ${NAMESPACE} -d ${LOCATION} -i ${IMAGE_NAME} -s ${SCOPE} &
 
   retries=100
-  until [[ $retries == 0 || $name == "kubefed" ]]; do
-    name=$(kubectl get kubefedconfig -n ${NAMESPACE} -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)
-    if [[ $name != "kubefed" ]]; then
+  until [[ $retries == 0 || $RESOURCE =~ "kubefed" ]]; do
+    RESOURCE=$(kubectl get kubefedconfig -n ${NAMESPACE} -o jsonpath='{.items[*].metadata.name}' 2>/dev/null)
+    if [[ $RESOURCE != *"kubefed"* ]]; then
         echo "Waiting for kubefedconfig to appear"
         sleep 1
         retries=$((retries - 1))
@@ -48,7 +50,7 @@ function setup-infrastructure () {
 
 function enable-resources () {
 
-if test X"$LOCATION" = Xolm-openshift; then
+if test X"$LOCATION" = Xolm-openshift || test X"$LOCATION" = Xolm-kube ; then
   # renaming context for openshift cluster to consumable format
   oc config rename-context $(oc config current-context) cluster1
 fi
@@ -56,10 +58,9 @@ fi
 echo "Performing the join operation on cluster1"
 kubefedctl join cluster1 --kubefed-namespace=${NAMESPACE} --host-cluster-context=cluster1 --host-cluster-name=cluster1 --cluster-context=cluster1
 
+if test X"$SCOPE" = XNamespaced; then
 echo "Enable FederatedTypeconfigs"
 kubefedctl enable namespaces --kubefed-namespace=${NAMESPACE}
-
-if test X"$SCOPE" != XCluster; then
 kubefedctl enable configmaps --kubefed-namespace=${NAMESPACE}
 echo "Creating a FederatedConfigMap resource"
 
@@ -80,9 +81,9 @@ EOF
 
 # check for a FederatedConfigMap name
 retries=100
-until [[ $retries == 0 || $CONFIGMAP == "test-configmap" ]]; do
-  CONFIGMAP=$(kubectl get configmap -n ${NAMESPACE} -o jsonpath='{.items[1].metadata.name}' 2>/dev/null)
-  if [[ $CONFIGMAP != "test-configmap" ]]; then
+until [[ $retries == 0 || $CONFIGMAP =~ "test-configmap" ]]; do
+  CONFIGMAP=$(kubectl get configmap -n ${NAMESPACE} -o jsonpath='{.items[*].metadata.name}' 2>/dev/null)
+  if [[ $CONFIGMAP != *"test-configmap"* ]]; then
       echo "Waiting for test-configmap to appear"
       sleep 1
       retries=$((retries - 1))
@@ -96,7 +97,9 @@ done
 
  echo "The configmap resource is federated successfully"
 
-else
+elif test X"$SCOPE" = XCluster; then
+echo "Enable FederatedTypeconfigs"
+kubefedctl enable namespaces --kubefed-namespace=${NAMESPACE}
 kubefedctl enable storageclass --kubefed-namespace=${NAMESPACE}
 echo "Creating a FederatedStorageClass resource"
 cat <<EOF | kubectl apply -f -
@@ -114,9 +117,9 @@ spec:
 EOF
 # check for a FederatedStorageClass name
 retries=100
-until [[ $retries == 0 || $STORAGECLASS == "test-storageclass" ]]; do
-  STORAGECLASS=$(kubectl get storageclass -o jsonpath='{.items[1].metadata.name}' 2>/dev/null)
-  if [[ $STORAGECLASS != "test-storageclass" ]]; then
+until [[ $retries == 0 || $STORAGECLASS =~ "test-storageclass" ]]; do
+  STORAGECLASS=$(kubectl get storageclass -o jsonpath='{.items[*].metadata.name}' 2>/dev/null)
+  if [[ $STORAGECLASS != *"test-storageclass"* ]]; then
       echo "Waiting for test-storageclass to appear"
       sleep 1
       retries=$((retries - 1))
@@ -129,8 +132,10 @@ done
  fi
 
  echo "The storageclass resource is federated successfully"
+else
+   echo "Please enter the valid scope"
+   exit 1
 fi
-
 }
 
 
