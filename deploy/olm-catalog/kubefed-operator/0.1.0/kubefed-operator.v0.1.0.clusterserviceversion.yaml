@@ -19,7 +19,7 @@ metadata:
           }
         },
         {
-          "apiVersion": "core.kubefed.k8s.io/v1alpha1",
+          "apiVersion": "core.kubefed.k8s.io/v1beta1",
           "kind": "ClusterPropagatedVersion",
           "metadata": {
             "name": "test-propagation"
@@ -42,7 +42,7 @@ metadata:
               "group": "types.kubefed.k8s.io",
               "kind": "FederatedDeployment",
               "pluralName": "federateddeployments",
-              "version": "v1alpha1"
+              "version": "v1beta1"
             },
             "namespaced": true,
             "propagationEnabled": true,
@@ -55,7 +55,7 @@ metadata:
           }
         },
         {
-          "apiVersion": "multiclusterdns.kubefed.k8s.io/v1alpha1",
+          "apiVersion": "multiclusterdns.kubefed.k8s.io/v1beta1",
           "kind": "Domain",
           "metadata": {
             "name": "test-domain"
@@ -65,7 +65,7 @@ metadata:
             }
         },
         {
-          "apiVersion": "multiclusterdns.kubefed.k8s.io/v1alpha1",
+          "apiVersion": "multiclusterdns.kubefed.k8s.io/v1beta1",
           "kind": "ServiceDNSRecord",
           "metadata": {
             "name": "test-service"
@@ -76,7 +76,7 @@ metadata:
             }
         },
         {
-          "apiVersion": "federatedservicestatuses.core.kubefed.k8s.io/v1alpha1",
+          "apiVersion": "federatedservicestatuses.core.kubefed.k8s.io/v1beta1",
           "kind": "FederatedServiceStatus",
           "metadata": {
             "name": "test-federatedservice-status"
@@ -89,7 +89,7 @@ metadata:
             }
         },
         {
-          "apiVersion": "multiclusterdns.kubefed.k8s.io/v1alpha1",
+          "apiVersion": "multiclusterdns.kubefed.k8s.io/v1beta1",
           "kind": "DNSEndpoint",
           "metadata": {
             "name": "service-test-service"
@@ -108,7 +108,7 @@ metadata:
             }
           },
         {
-          "apiVersion": "multiclusterdns.kubefed.k8s.io/v1alpha1",
+          "apiVersion": "multiclusterdns.kubefed.k8s.io/v1beta1",
           "kind": "IngressDNSRecord",
           "metadata": {
             "name": "test-ingress"
@@ -121,7 +121,7 @@ metadata:
             }
         },
         {
-          "apiVersion": "scheduling.kubefed.k8s.io/v1alpha1",
+          "apiVersion": "scheduling.kubefed.k8s.io/v1beta1",
           "kind": "ReplicaSchedulingPreference",
           "metadata": {
             "name": "test-deployment"
@@ -141,7 +141,7 @@ metadata:
             }
         },
         {
-          "apiVersion": "core.kubefed.k8s.io/v1alpha1",
+          "apiVersion": "core.kubefed.k8s.io/v1beta1",
           "kind": "PropagatedVersion",
           "metadata": {
             "name": "test-propagation"
@@ -193,7 +193,7 @@ metadata:
           "enabled": true
         },
         {
-          "apiVersion": "operator.kubefed.io/v1alpha1",
+          "apiVersion": "operator.kubefed.io/v1beta1",
           "kind": "KubeFed",
           "metadata": {
             "name": "kubefed"
@@ -210,7 +210,7 @@ metadata:
     createdAt: "2019-06-14T00:00:00Z"
     description: Gain Hybrid Cloud capabilities between your clusters with Kubernetes
       Federation.
-    repository: https://github.com/pmorie/kubefed-operator
+    repository: https://github.com/openshift/kubefed-operator
     support: Red Hat
   name: kubefed-operator.v0.1.0
   namespace: placeholder
@@ -222,17 +222,17 @@ spec:
       displayName: ClusterPropagatedVersion
       kind: ClusterPropagatedVersion
       name: clusterpropagatedversions.core.kubefed.k8s.io
-      version: v1alpha1
+      version: v1beta1
     - description: DNSEndpoint is the CRD wrapper for Endpoint which is designed to act as a source of truth for external-dns.
       displayName: DNSEndpoint
       kind: DNSEndpoint
       name: dnsendpoints.multiclusterdns.kubefed.k8s.io
-      version: v1alpha1
+      version: v1beta1
     - description: Domain is the DNS zone associated with the kubefed control plane
       displayName: Domain
       kind: Domain
       name: domains.multiclusterdns.kubefed.k8s.io
-      version: v1alpha1
+      version: v1beta1
     - description: KubeFedCluster configures kubefed to be aware of a Kubernetes cluster and encapsulates the details necessary to communicate with the cluster.
       displayName: KubeFedCluster
       kind: KubeFedCluster
@@ -242,7 +242,7 @@ spec:
       displayName: FederatedServiceStatus
       kind: FederatedServiceStatus
       name: federatedservicestatuses.core.kubefed.k8s.io
-      version: v1alpha1
+      version: v1beta1
     - description: FederatedTypeConfig programs kubefed to know about a single API type - the "target type" - that a user wants to federate.
       displayName: FederatedTypeConfig 
       kind: FederatedTypeConfig
@@ -257,27 +257,27 @@ spec:
       displayName: IngressDNSRecord 
       kind: IngressDNSRecord
       name: ingressdnsrecords.multiclusterdns.kubefed.k8s.io
-      version: v1alpha1
+      version: v1beta1
     - description: PropagatedVersion
       displayName: PropagatedVersion
       kind: PropagatedVersion
       name: propagatedversions.core.kubefed.k8s.io
-      version: v1alpha1
+      version: v1beta1
     - description: ReplicaSchedulingPreference
       displayName: ReplicaSchedulingPreference
       kind: ReplicaSchedulingPreference
       name: replicaschedulingpreferences.scheduling.kubefed.k8s.io
-      version: v1alpha1
+      version: v1beta1
     - description: ServiceDNSRecord
       displayName: ServiceDNSRecord
       kind: ServiceDNSRecord
       name: servicednsrecords.multiclusterdns.kubefed.k8s.io
-      version: v1alpha1
+      version: v1beta1
     - description: KubeFed
       displayName: KubeFed
       kind: KubeFed
       name: kubefeds.operator.kubefed.io
-      version: v1alpha1
+      version: v1beta1
   description: |
     Kubernetes Federation is a tool to sync (aka "federate") a set of Kubernetes
     objects from a "source" into a set of other clusters. Common use-cases
@@ -451,7 +451,7 @@ spec:
     Let's do an example using the `deployments` resource.
 
         kubectl create -f - <<END
-        apiVersion: types.kubefed.k8s.io/v1alpha1
+        apiVersion: types.kubefed.k8s.io/v1beta1
         kind: FederatedDeployment
         metadata:
           name: hello
@@ -696,7 +696,7 @@ spec:
   maintainers:
   - email: kubefed-operator@redhat.com
     name: Kubefed Team
-  maturity: alpha
+  maturity: beta
   provider:
     name: Red Hat
   version: 0.1.0
