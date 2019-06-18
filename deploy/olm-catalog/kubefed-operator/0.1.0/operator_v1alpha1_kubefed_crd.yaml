@@ -30,6 +30,7 @@ spec:
         spec:
           properties:
             scope:
+              description: The scope of the installed release
               type: string
           required:
           - scope
