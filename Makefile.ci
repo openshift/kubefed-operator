@@ -3,11 +3,11 @@
 
 .ONESHELL:
 unit:
-     echo "OK"
+    echo "OK"
 
 .ONESHELL:
 vet:
     echo "OK"
 
 olm-e2e:
-        echo "OK"
+    echo "OK"
