@@ -1,0 +1,13 @@
+# Makefile.ci holds make directives called by the CI jobs for this repo.
+
+
+.ONESHELL:
+unit:
+     echo "OK"
+
+.ONESHELL:
+vet:
+    echo "OK"
+
+olm-e2e:
+        echo "OK"
