@@ -2,9 +2,12 @@
 
 
 .ONESHELL:
-unit: echo "OK"
+unit:
+     echo "OK"
 
 .ONESHELL:
-vet: echo "OK"
+vet:
+    echo "OK"
 
-olm-e2e: echo "OK"
+olm-e2e:
+        echo "OK"
