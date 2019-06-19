@@ -210,7 +210,7 @@ metadata:
     createdAt: "2019-06-14T00:00:00Z"
     description: Gain Hybrid Cloud capabilities between your clusters with Kubernetes
       Federation.
-    repository: https://github.com/pmorie/kubefed-operator
+    repository: https://github.com/openshift/kubefed-operator
     support: Red Hat
   name: kubefed-operator.v0.1.0
   namespace: placeholder

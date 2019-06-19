@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	mf "github.com/jcrossley3/manifestival"
-	kubefedv1alpha1 "github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1"
-	"github.com/pmorie/kubefed-operator/version"
+	kubefedv1alpha1 "github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1"
+	"github.com/openshift/kubefed-operator/version"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
