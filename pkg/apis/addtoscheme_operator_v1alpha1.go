@@ -1,7 +1,7 @@
 package apis
 
 import (
-	"github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1"
+	"github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1"
 )
 
 func init() {
