@@ -10,8 +10,8 @@ while getopts “n:d:i:s:” opt; do
     case $opt in
 	n) NAMESPACE=$OPTARG ;;
 	d) LOCATION=$OPTARG ;;
-  i) IMAGE_NAME=$OPTARG ;;
-  s) SCOPE=$OPTARG;;
+        i) IMAGE_NAME=$OPTARG ;;
+        s) SCOPE=$OPTARG;;
     esac
 done
 echo "NS=$NAMESPACE"

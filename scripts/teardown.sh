@@ -7,7 +7,7 @@ LOCATION="${LOCATION:-local}"
 while getopts “n:d:” opt; do
     case $opt in
 	n) NAMESPACE=$OPTARG ;;
-    d) LOCATION=$OPTARG ;;
+        d) LOCATION=$OPTARG ;;
     esac
 done
 
