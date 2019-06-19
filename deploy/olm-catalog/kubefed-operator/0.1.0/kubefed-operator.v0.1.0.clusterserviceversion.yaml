@@ -294,15 +294,14 @@ spec:
     manually before installing a new version.
 
 
-    ## Using Federation
+    ## Using KubeFed
 
-    This deploys Federation in a namespace-scoped configuration which handles
-    the resources only in the namespace where federation is deployed. For
-    example, if you subscribe to this package in namespace `my-namespace`,
-    federation will be deployed to manage objects _only_ in `my-namespace` in
+    This deploys KubeFed in a namespace-scoped as well as in a cluster-scoped fashion.
+    For example, if you subscribe to this package in namespace `my-namespace`,
+    KubeFed will be deployed to manage objects _only_ in `my-namespace` in
     the host cluster and target clusters.
 
-    After installing Federation instance, you will use the `kubefedctl` command
+    After installing KubeFed instance, you will use the `kubefedctl` command
     line tool to do two types of configuration:
       
     - Configure federation to connect to your target clusters with `kubefedctl join`
@@ -317,7 +316,7 @@ spec:
 
     **Important Note**: The instructions in this guide refer to the namespace
     where federation is installed as `<namespace>` in command examples. The
-    upstream user guide uses `federation-system` as the name of this namespace.
+    upstream user guide uses `kube-federation-system` as the name of this namespace.
 
     ### Get the kubefedctl CLI tool
 
@@ -338,12 +337,17 @@ spec:
           --host-cluster-context mycluster \       # name of a KUBECONFIG context for the hosting cluster
           --kubefed-namespace=<namespace> \        # namespace where federation is deployed
           -v 2
-    
+     
+     Note: if you're using an openshift cluster for deploying the kubefed-operator then
+     use the following command for renaming context to consumable format.
+
+     oc config rename-context $(oc config current-context) <cluster-name>
+
     `kubefedctl join` creates `KubeFedCluster` and `Cluster` resources named
     `cluster-name` to represent the joined cluster.
 
     `KubeFedCluster` resources pair `Cluster` resources to secrets holding
-    `KUBECONFIG` information that kubefed uses to connect to `Clusters`.
+    `KUBECONFIG` information that kubefed uses tocluster1 connect to `Clusters`.
 
         kubectl get kubefedclusters -n <namespace>
         NAME            READY     AGE
