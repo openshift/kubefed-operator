@@ -33,7 +33,7 @@ This will run the operator configured to watch the `kubefed-test` namespace.
 ```bash
 {"level":"info","ts":1560806650.3372273,"logger":"kubebuilder.controller","msg":"Starting workers","controller":"kubefed-controller","worker count":1}
 ```
-Once you get the above message, you can create a `kubefed` in the `kubefed-test` namespace to drive the installation in that namespace:
+Once you get the above message, you can create a `KubeFed` in the `kubefed-test` namespace to drive the installation in that namespace:
 
 ```
 $ kubectl create -f deploy/crds/operator_v1alpha1_kubefed_cr.yaml -n kubefed-test

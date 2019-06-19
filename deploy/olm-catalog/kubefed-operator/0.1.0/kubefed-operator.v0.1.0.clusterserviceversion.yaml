@@ -347,7 +347,7 @@ spec:
     `cluster-name` to represent the joined cluster.
 
     `KubeFedCluster` resources pair `Cluster` resources to secrets holding
-    `KUBECONFIG` information that kubefed uses tocluster1 connect to `Clusters`.
+    `KUBECONFIG` information that kubefed uses to connect to `Clusters`.
 
         kubectl get kubefedclusters -n <namespace>
         NAME            READY     AGE
