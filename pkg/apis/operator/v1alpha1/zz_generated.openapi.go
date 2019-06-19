@@ -13,9 +13,9 @@ import (
 
 func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenAPIDefinition {
 	return map[string]common.OpenAPIDefinition{
-		"github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFed":       schema_pkg_apis_operator_v1alpha1_KubeFed(ref),
-		"github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedSpec":   schema_pkg_apis_operator_v1alpha1_KubeFedSpec(ref),
-		"github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedStatus": schema_pkg_apis_operator_v1alpha1_KubeFedStatus(ref),
+		"github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFed":       schema_pkg_apis_operator_v1alpha1_KubeFed(ref),
+		"github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedSpec":   schema_pkg_apis_operator_v1alpha1_KubeFedSpec(ref),
+		"github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedStatus": schema_pkg_apis_operator_v1alpha1_KubeFedStatus(ref),
 	}
 }
 
@@ -46,19 +46,19 @@ func schema_pkg_apis_operator_v1alpha1_KubeFed(ref common.ReferenceCallback) com
 					},
 					"spec": {
 						SchemaProps: spec.SchemaProps{
-							Ref: ref("github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedSpec"),
+							Ref: ref("github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedSpec"),
 						},
 					},
 					"status": {
 						SchemaProps: spec.SchemaProps{
-							Ref: ref("github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedStatus"),
+							Ref: ref("github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedStatus"),
 						},
 					},
 				},
 			},
 		},
 		Dependencies: []string{
-			"github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedSpec", "github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+			"github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedSpec", "github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
 	}
 }
 
