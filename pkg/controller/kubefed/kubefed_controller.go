@@ -8,6 +8,7 @@ import (
 	mf "github.com/jcrossley3/manifestival"
 	kubefedv1alpha1 "github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1"
 	"github.com/openshift/kubefed-operator/version"
+	appsv1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -96,6 +97,7 @@ func (r *ReconcileKubeFed) Reconcile(request reconcile.Request) (reconcile.Resul
 
 	stages := []func(*kubefedv1alpha1.KubeFed) error{
 		r.install,
+		r.checkDeployments,
 		r.configure,
 	}
 
@@ -234,6 +236,21 @@ func (r *ReconcileKubeFed) install(instance *kubefedv1alpha1.KubeFed) error {
 	if err := r.client.Status().Update(context.TODO(), instance); err != nil {
 		return err
 	}
+	return nil
+}
+
+// Check for all deployments available
+func (r *ReconcileKubeFed) checkDeployments(instance *kubefedv1alpha1.KubeFed) error {
+	deployment := &appsv1.Deployment{}
+	for _, u := range r.config.Resources {
+		if u.GetKind() == "Deployment" {
+			key := client.ObjectKey{Namespace: u.GetNamespace(), Name: u.GetName()}
+			if err := r.client.Get(context.TODO(), key, deployment); err != nil {
+				return err
+			}
+		}
+	}
+	log.Info("All deployments are available")
 	return nil
 }
 
