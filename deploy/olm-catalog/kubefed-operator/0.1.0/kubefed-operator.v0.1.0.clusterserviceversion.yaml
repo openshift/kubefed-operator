@@ -273,10 +273,14 @@ spec:
       kind: ServiceDNSRecord
       name: servicednsrecords.multiclusterdns.kubefed.k8s.io
       version: v1alpha1
-    - description: KubeFed
+    - description: Represents an installation of a particular version of KubFed
       displayName: KubeFed
       kind: KubeFed
       name: kubefeds.operator.kubefed.io
+      statusDescriptors:
+      - description: The version of Knative Serving installed
+        displayName: Version
+        path: version
       version: v1alpha1
   description: |
     Kubernetes Federation is a tool to sync (aka "federate") a set of Kubernetes
