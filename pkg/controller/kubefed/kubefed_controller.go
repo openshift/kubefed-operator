@@ -234,6 +234,7 @@ func (r *ReconcileKubeFed) install(instance *kubefedv1alpha1.KubeFed) error {
 	if err := r.client.Status().Update(context.TODO(), instance); err != nil {
 		return err
 	}
+	log.Info("Install succeeded", "version", version.Version)
 	return nil
 }
 
