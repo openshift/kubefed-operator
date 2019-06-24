@@ -49,16 +49,16 @@ $ ./scripts/install-kubefed.sh -n kubefed-test -d local -s Namespaced
 ```
 ### Smoke Testing
 The smoke-test script is designed to peform smoke testing on the kubefed-operator. It's handling the following scenarios:
-a) A local deployment (Location: local)
-b) in-cluster deployment using Kind (Location: cluster)
-c) Deployment via OLM on Minikube (Location: olm-kube)
-d) Deployment via OLM on Openshift Cluster (Location: olm-openshift)
+*  A local deployment (Location: local)
+*  in-cluster deployment using Kind (Location: cluster)
+* Deployment via OLM on Minikube (Location: olm-kube)
+* Deployment via OLM on Openshift Cluster (Location: olm-openshift)
 
  
 
 #### Usage:
 ```bash
-$ ./scripts/smoke-test.scirpt  -n ${NAMESPACE} -d ${LOCATION} -i ${IMAGE_NAME} -s ${SCOPE}
+$ ./scripts/smoke-test.sh  -n ${NAMESPACE} -d ${LOCATION} -i ${IMAGE_NAME} -s ${SCOPE}
 ```
 <br>
 
@@ -72,5 +72,5 @@ $ ./scripts/smoke-test.scirpt  -n ${NAMESPACE} -d ${LOCATION} -i ${IMAGE_NAME} -
  #### Example: for in-cluster deployment 
 
 ```bash
-$ ./scripts/smoke-test.scirpt -n kubefed-test -d cluster -s Namespaced
+$ ./scripts/smoke-test.sh -n kubefed-test -d cluster -s Namespaced
 ```
