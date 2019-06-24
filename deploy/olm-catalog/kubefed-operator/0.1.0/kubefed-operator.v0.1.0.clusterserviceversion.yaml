@@ -278,7 +278,7 @@ spec:
       kind: KubeFed
       name: kubefeds.operator.kubefed.io
       statusDescriptors:
-      - description: The version of Knative Serving installed
+      - description: The version of KubeFed installed
         displayName: Version
         path: version
       version: v1alpha1
