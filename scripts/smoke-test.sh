@@ -100,6 +100,7 @@ done
 elif test X"$SCOPE" = XCluster; then
 echo "Enable FederatedTypeconfigs"
 kubefedctl enable namespaces --kubefed-namespace=${NAMESPACE}
+sleep 5
 kubefedctl enable storageclass --kubefed-namespace=${NAMESPACE}
 echo "Creating a FederatedStorageClass resource"
 cat <<EOF | kubectl apply -f -
