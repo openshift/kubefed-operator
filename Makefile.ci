@@ -1,12 +1,17 @@
 # Makefile.ci holds make directives called by the CI jobs for this repo.
-
+TARGET = kubefed-operator
+GOTARGET = github.com/openshift/$(TARGET)
+TESTARGS ?= $(VERBOSE_FLAG) -timeout 60s
+TEST_PKGS ?= $(GOTARGET)/cmd/... $(GOTARGET)/pkg/...
+TEST_CMD = go test $(TESTARGS)
+TEST = $(TEST_CMD) $(TEST_PKGS)
 .ONESHELL:
 unit:
-	echo "OK"
+	$(TEST)
 
 .ONESHELL:
 vet:
-	echo "OK"
+	go vet $(TEST_PKGS)
 
 olm-e2e:
 	echo "OK"
