@@ -27,7 +27,7 @@ spec:
         - --logtostderr
         command:
         - /hyperfed/controller-manager
-        image: quay.io/anbhat/kubefed:v0.1.0-rc2-PR971
+        image: quay.io/kubernetes-multicluster/kubefed:v0.1.0-rc2
         imagePullPolicy: Always
         name: controller-manager
         livenessProbe:
