@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	mf "github.com/jcrossley3/manifestival"
-	kubefedv1alpha1 "github.com/pmorie/kubefed-operator/pkg/apis/operator/v1alpha1"
-	"github.com/pmorie/kubefed-operator/version"
+	kubefedv1alpha1 "github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1"
+	"github.com/openshift/kubefed-operator/version"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -234,6 +234,7 @@ func (r *ReconcileKubeFed) install(instance *kubefedv1alpha1.KubeFed) error {
 	if err := r.client.Status().Update(context.TODO(), instance); err != nil {
 		return err
 	}
+	log.Info("Install succeeded", "version", version.Version)
 	return nil
 }
 

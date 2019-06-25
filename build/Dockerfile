@@ -4,6 +4,10 @@ ENV OPERATOR=/usr/local/bin/kubefed-operator \
     USER_UID=1001 \
     USER_NAME=kubefed-operator
 
+LABEL com.redhat.delivery.appregistry=true
+
+ADD deploy/olm-catalog/kubefed-operator /manifests
+
 # install operator binary
 COPY build/_output/bin/kubefed-operator ${OPERATOR}
 

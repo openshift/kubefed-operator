@@ -210,7 +210,7 @@ metadata:
     createdAt: "2019-06-14T00:00:00Z"
     description: Gain Hybrid Cloud capabilities between your clusters with Kubernetes
       Federation.
-    repository: https://github.com/pmorie/kubefed-operator
+    repository: https://github.com/openshift/kubefed-operator
     support: Red Hat
   name: kubefed-operator.v0.1.0
   namespace: placeholder
@@ -273,10 +273,14 @@ spec:
       kind: ServiceDNSRecord
       name: servicednsrecords.multiclusterdns.kubefed.k8s.io
       version: v1alpha1
-    - description: KubeFed
+    - description: Represents an installation of a particular version of KubeFed
       displayName: KubeFed
       kind: KubeFed
       name: kubefeds.operator.kubefed.io
+      statusDescriptors:
+      - description: The version of KubeFed installed
+        displayName: Version
+        path: version
       version: v1alpha1
   description: |
     Kubernetes Federation is a tool to sync (aka "federate") a set of Kubernetes
