@@ -17,7 +17,6 @@ IMAGE_NAME="quay.io/sohankunkerkar/kubefed-operator:v0.1.0"
 OPERATOR_YAML_PATH="./deploy/operator.yaml"
 CLUSTER_ROLEBINDING="./deploy/role_binding.yaml"
 CSV_PATH="./deploy/olm-catalog/kubefed-operator/${OPERATOR_VERSION}/kubefed-operator.v${OPERATOR_VERSION}.clusterserviceversion.yaml"
-CSV_TMP_PATH="./tmp_csv.yaml"
 SCOPE="Namespaced"
 
 while getopts “n:d:i:s:” opt; do
@@ -87,10 +86,8 @@ elif test X"$LOCATION" = Xolm-kube; then
  ./scripts/kubernetes/olm-install.sh ${OLM_VERSION}
  
  echo "OLM is deployed on kube cluster"
- cp $CSV_PATH $CSV_TMP_PATH
- chmod +w $CSV_TMP_PATH
- sed "s,image: quay.*$,image: ${IMAGE_NAME}," -i $CSV_TMP_PATH|./hack/catalog.sh | kubectl apply -n $NAMESPACE -f -
- rm $CSV_TMP_PATH
+ sed "s,image: quay.*$,image: ${IMAGE_NAME}," -i.bak $CSV_PATH|./hack/catalog.sh | kubectl apply -n $NAMESPACE -f -
+ mv $CSV_PATH.bak $CSV_PATH
  cat <<-EOF | kubectl apply -f -
 ---
 apiVersion: v1
@@ -122,11 +119,9 @@ EOF
 
 # olm deployment on openshift cluster   
 elif test X"$LOCATION" = Xolm-openshift; then
- cp $CSV_PATH $CSV_TMP_PATH
- chmod +w $CSV_TMP_PATH
- sed "s,image: quay.*$,image: ${IMAGE_NAME}," -i $CSV_TMP_PATH|./hack/catalog.sh | oc apply -n $NAMESPACE -f -
- rm $CSV_TMP_PATH
- cat <<-EOF | kubectl apply -f -
+ sed "s,image: quay.*$,image: ${IMAGE_NAME}," -i.bak $CSV_PATH|./hack/catalog.sh | oc apply -n $NAMESPACE -f -
+ mv $CSV_PATH.bak $CSV_PATH
+ cat <<-EOF | oc apply -f -
 ---
 apiVersion: v1
 kind: Namespace
