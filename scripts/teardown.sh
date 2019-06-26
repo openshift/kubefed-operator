@@ -32,7 +32,7 @@ echo ">> Kill the kubefed-operator process"
 kill $(ps ax | grep "kubefed-operator" | awk '{print $1}'| head -n 1)
 
 echo ">> Deleting Namespaces"
-if [[ "$LOCATION" == "olm-openshift" && "$NAMESPACE" == "default" ]] || [[ "$LOCATION" == "olm-kube" && "$NAMESPACE" == "default" ]]; then
+if [[ "$LOCATION" == "olm-openshift" && "$NAMESPACE" == "default" ]]; then
    kubectl delete ns olm
    kubectl delete ns operators 
 elif test X"$NAMESPACE" != Xdefault ; then
@@ -41,11 +41,8 @@ else
    echo "Skipping this step as ${NAMESPACE} namespace may not be deleted "
 fi
 # For deleting a given cluster
- if [[ "$LOCATION" != "olm-openshift" && "$LOCATION" != "olm-kube" ]]; then
+ if [[ "$LOCATION" != "olm-openshift" ]]; then
     kind delete cluster --name=${CLUSTERNAME}
- elif test X"$LOCATION" = Xolm-kube; then
-     minikube stop
-     rm -fr ~/.minikube/
  else
    # Assumption: openshift-install binary is already installed 
    # and present in the $PATH
