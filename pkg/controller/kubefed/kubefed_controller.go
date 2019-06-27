@@ -5,6 +5,8 @@ import (
 	"flag"
 	"strings"
 
+	"github.com/operator-framework/operator-sdk/pkg/predicate"
+
 	mf "github.com/jcrossley3/manifestival"
 	kubefedv1alpha1 "github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1"
 	"github.com/openshift/kubefed-operator/version"
@@ -54,7 +56,7 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	}
 
 	// Watch for changes to primary resource KubeFed
-	err = c.Watch(&source.Kind{Type: &kubefedv1alpha1.KubeFed{}}, &handler.EnqueueRequestForObject{})
+	err = c.Watch(&source.Kind{Type: &kubefedv1alpha1.KubeFed{}}, &handler.EnqueueRequestForObject{}, predicate.GenerationChangedPredicate{})
 	if err != nil {
 		return err
 	}
