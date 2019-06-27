@@ -1,6 +1,6 @@
 # kubefed-operator
 
-This repository contains code for an operator for deploying [KubeFed](https://github.com/kubernetes-sigs/federation-v2). It is planned to eventually replace the [federation-v2-operator repo](https://github.com/openshift/federation-v2-operator).
+This repository contains code for an operator for deploying [KubeFed](https://github.com/kubernetes-sigs/kubefed). It is planned to replace the [federation-v2-operator repo](https://github.com/openshift/federation-v2-operator).
 
 ## Deploying and testing
 
