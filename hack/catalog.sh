@@ -1,5 +1,6 @@
 #!/bin/bash
 
+CSV_FILE=$1
 DIR=${DIR:-$(cd $(dirname "$0")/.. && pwd)}
 NAME=${NAME:-$(ls $DIR/deploy/olm-catalog)}
 
@@ -12,7 +13,7 @@ indent() {
 }
 
 CRD=$(cat $(find $DIR/deploy/olm-catalog -name '*_crd.yaml' | sort -n) | grep -v -- "---" | indent apiVersion)
-CSV=$(cat $(find $DIR/deploy/olm-catalog -name '*version.yaml' | sort -n) | indent apiVersion)
+CSV=$(cat $CSV_FILE | indent apiVersion)
 PKG=$(cat $DIR/deploy/olm-catalog/$NAME/*package.yaml | indent packageName)
 
 cat <<EOF | sed 's/^  *$//'
