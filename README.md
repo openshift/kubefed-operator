@@ -18,7 +18,7 @@ $ operator-sdk up local --namespace=kubefed-test
 
 This will run the operator configured to watch the `kubefed-test` namespace.
 
-After that step, you can create a `KubeFed` in the `kubefed-test` namespace to drive the installation in that namespace:
+After that step, you can create a `KubeFed` custom resource in the `kubefed-test` namespace to drive the installation in that namespace:
 
 ```
 $ kubectl create -f deploy/crds/operator_v1alpha1_kubefed_cr.yaml -n kubefed-test
