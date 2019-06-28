@@ -138,32 +138,36 @@ func resourceScopeFilter(resources []unstructured.Unstructured, scope kubefedv1a
 func resourceEnvUpdate(scope kubefedv1alpha1.InstallationScope, ns, name string) mf.Transformer {
 	return func(u *unstructured.Unstructured) error {
 		reqLogger := log.WithValues("Instance.Namespace", ns, "Instance.Name", name)
-		if scope == kubefedv1alpha1.InstallationScopeNamespaceScoped {
-			switch strings.ToLower(u.GetKind()) {
-			case "deployment":
-				if containers, ok, err := unstructured.NestedSlice(u.Object,
-					"spec", "template", "spec", "containers"); ok {
-					if envs, envOk, envErr := unstructured.NestedSlice(containers[0].(map[string]interface{}), "env"); envOk {
-						if !checkEnvExists(envs, "name", "DEFAULT_KUBEFED_SCOPE") {
-							fse := map[string]interface{}{"name": "DEFAULT_KUBEFED_SCOPE", "value": "Namespaced"}
-							envs = append(envs, fse)
-						}
-						reqLogger.Info("Transforming deployment resource for environment update - env; ", "envs", envs)
-						envErr = unstructured.SetNestedSlice(containers[0].(map[string]interface{}), envs, "env")
-						if envErr != nil {
-							reqLogger.Info("Failed to update the environment")
-						}
-						err = unstructured.SetNestedSlice(u.Object, containers, "spec", "template", "spec", "containers")
-						if err != nil {
-							reqLogger.Info("Failed to update the container array")
-						}
-					} else {
-						reqLogger.Info("Failed to get the env array")
+		kubefedScope := "Namespaced"
+		if scope == kubefedv1alpha1.InstallationScopeClusterScoped {
+			kubefedScope = "Cluster"
+
+		}
+
+		switch strings.ToLower(u.GetKind()) {
+		case "deployment":
+			if containers, ok, err := unstructured.NestedSlice(u.Object,
+				"spec", "template", "spec", "containers"); ok {
+				if envs, envOk, envErr := unstructured.NestedSlice(containers[0].(map[string]interface{}), "env"); envOk {
+					if !checkEnvExists(envs, "name", "DEFAULT_KUBEFED_SCOPE") {
+						fse := map[string]interface{}{"name": "DEFAULT_KUBEFED_SCOPE", "value": kubefedScope}
+						envs = append(envs, fse)
+					}
+					reqLogger.Info("Transforming deployment resource for environment update - env; ", "envs", envs)
+					envErr = unstructured.SetNestedSlice(containers[0].(map[string]interface{}), envs, "env")
+					if envErr != nil {
+						reqLogger.Info("Failed to update the environment")
+					}
+					err = unstructured.SetNestedSlice(u.Object, containers, "spec", "template", "spec", "containers")
+					if err != nil {
+						reqLogger.Info("Failed to update the container array")
 					}
 				} else {
-					fooLogger := log.WithValues("namespace", ns, "name", name, "scope", scope, "error", err)
-					fooLogger.Info("Cannot get the nested slice for env")
+					reqLogger.Info("Failed to get the env array")
 				}
+			} else {
+				fooLogger := log.WithValues("namespace", ns, "name", name, "scope", scope, "error", err)
+				fooLogger.Info("Cannot get the nested slice for env")
 			}
 		}
 		return nil

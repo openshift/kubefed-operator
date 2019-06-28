@@ -89,7 +89,8 @@ elif test X"$LOCATION" = Xolm-kube; then
  echo "OLM is deployed on kube cluster"
  cp $CSV_PATH $CSV_TMP_PATH
  chmod +w $CSV_TMP_PATH
- sed "s,image: quay.*$,image: ${IMAGE_NAME}," -i $CSV_TMP_PATH|./hack/catalog.sh | kubectl apply -n $NAMESPACE -f -
+ sed "s,image: quay.*$,image: ${IMAGE_NAME}," -i $CSV_TMP_PATH
+ ./hack/catalog.sh $CSV_TMP_PATH | kubectl apply -n $NAMESPACE -f -
  rm $CSV_TMP_PATH
  cat <<-EOF | kubectl apply -f -
 ---
@@ -124,9 +125,10 @@ EOF
 elif test X"$LOCATION" = Xolm-openshift; then
  cp $CSV_PATH $CSV_TMP_PATH
  chmod +w $CSV_TMP_PATH
- sed "s,image: quay.*$,image: ${IMAGE_NAME}," -i $CSV_TMP_PATH|./hack/catalog.sh | oc apply -n $NAMESPACE -f -
+ sed "s,image: quay.*$,image: ${IMAGE_NAME}," -i $CSV_TMP_PATH
+ ./hack/catalog.sh $CSV_TMP_PATH | oc apply -n $NAMESPACE -f -
  rm $CSV_TMP_PATH
- cat <<-EOF | kubectl apply -f -
+ cat <<-EOF | oc apply -f -
 ---
 apiVersion: v1
 kind: Namespace

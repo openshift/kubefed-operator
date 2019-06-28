@@ -3,7 +3,7 @@
 #Default values
 NAMESPACE="${NAMESPACE:-default}"
 LOCATION="${LOCATION:-local}"
-VERSION="${VERSION:-v0.1.0-rc2}"
+VERSION="${VERSION:-v0.1.0-rc3}"
 IMAGE_NAME="${IMAGE_NAME:-quay.io/sohankunkerkar/kubefed-operator:v0.1.0}"
 SCOPE="${SCOPE:-Namespaced}"
 while getopts “n:d:i:s:” opt; do
