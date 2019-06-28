@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION="${VERSION:-v0.1.0-rc2}"
+VERSION="${VERSION:-v0.1.0-rc3}"
 OS=$(go env GOOS)
 ARCH=$(go env GOARCH)
 

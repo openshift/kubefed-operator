@@ -161,36 +161,30 @@ metadata:
             },
           "spec": {
             "scope": "Cluster",
-            "controllerDuration": {
-              "availableDelay": "20s",
-              "unavailableDelay": "60s",
-              "clusterMonitorPeriod": "40s"
-              },
             "leaderElect": {
               "leaseDuration": "15s",
               "renewDeadline": "10s",
-              "retryPeriod": "5s",
-              "resourceLock": "configmaps"
+              "retryPeriod": "5s"
               },
             "featureGates": [
               {
                 "name": "PushReconciler",
-                "enabled": true
+                "configuration": "Enabled"
                 },
               {
                 "name": "SchedulerPreferences",
-                "enabled": true
+                "configuration": "Enabled"
               },
              {
                "name": "CrossClusterServiceDiscovery",
-               "enabled": true
+               "configuration": "Enabled"
               },
               {
-               "name": "FederatedIngress"
+               "name": "FederatedIngress",
+               "configuration": "Enabled"
                }
             ]
-          },
-          "enabled": true
+          }
         },
         {
           "apiVersion": "operator.kubefed.io/v1alpha1",
@@ -330,7 +324,7 @@ spec:
     Before you use kubefed, you should ensure that you're using the binary
     for this version. You can get it from the releases on GitHub.
 
-        curl -Ls https://github.com/kubernetes-sigs/kubefed/releases/download/v0.1.0-rc2/kubefedctl-0.1.0-rc2-linux-amd64.tgz | tar xz
+        curl -Ls https://github.com/kubernetes-sigs/kubefed/releases/download/v0.1.0-rc3/kubefedctl-0.1.0-rc3-linux-amd64.tgz | tar xz
 
     ### Joining Clusters
 
