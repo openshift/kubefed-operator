@@ -13,7 +13,7 @@ LOCATION="local"
 OLM_VERSION="0.10.0"
 OPERATOR_VERSION="0.1.0"
 OPERATOR="kubefed-operator"
-IMAGE_NAME="quay.io/sohankunkerkar/kubefed-operator:v0.1.0"
+IMAGE_NAME="quay.io/openshift/kubefed-operator:v0.1.0-rc3"
 OPERATOR_YAML_PATH="./deploy/operator.yaml"
 CLUSTER_ROLEBINDING="./deploy/role_binding.yaml"
 CSV_PATH="./deploy/olm-catalog/kubefed-operator/${OPERATOR_VERSION}/kubefed-operator.v${OPERATOR_VERSION}.clusterserviceversion.yaml"
@@ -39,14 +39,18 @@ if test X"$NAMESPACE" != Xdefault; then
     kubectl create ns ${NAMESPACE}
 fi
 
+# Install kubefed webhook CRD
+kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefedwebhook_crd.yaml
 # Install kubefed CRD
 kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefed_crd.yaml
 
 # Install kubefed CR based on the scope
 if test X"$SCOPE" = XCluster; then
-  sed "s,scope:.*,scope: ${SCOPE}," ./deploy/crds/operator_v1alpha1_kubefed_cr.yaml | kubectl apply -n $NAMESPACE -f -
+    sed "s,scope:.*,scope: ${SCOPE}," ./deploy/crds/operator_v1alpha1_kubefed_cr.yaml | kubectl apply -n $NAMESPACE -f -
+    sed "s,scope:.*,scope: ${SCOPE}," ./deploy/crds/operator_v1alpha1_kubefedwebhook_cr.yaml | kubectl apply -n $NAMESPACE -f -
 else
-  kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefed_cr.yaml -n $NAMESPACE
+    kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefed_cr.yaml -n $NAMESPACE
+    kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefedwebhook_cr.yaml -n $NAMESPACE
 fi
 
 
@@ -120,7 +124,15 @@ spec:
   name: ${OPERATOR}
   channel: alpha
 EOF
-
+ retries=20
+  until [[ $retries == 0 || $SUBSCRIPTION =~ "AtLatestKnown" ]]; do
+    SUBSCRIPTION=$(kubectl get subscription -n ${NAMESPACE} -o jsonpath='{.items[*].status.state}' 2>/dev/null)
+    if [[ $SUBSCRIPTION != *"AtLatestKnown"* ]]; then
+        echo "Waiting for subscription to gain status"
+        sleep 1
+        retries=$((retries - 1))
+    fi
+  done
 # olm deployment on openshift cluster   
 elif test X"$LOCATION" = Xolm-openshift; then
  cp $CSV_PATH $CSV_TMP_PATH
@@ -156,6 +168,15 @@ spec:
   name: ${OPERATOR}
   channel: alpha
 EOF
+ retries=20
+  until [[ $retries == 0 || $SUBSCRIPTION =~ "AtLatestKnown" ]]; do
+    SUBSCRIPTION=$(kubectl get subscription -n ${NAMESPACE} -o jsonpath='{.items[*].status.state}' 2>/dev/null)
+    if [[ $SUBSCRIPTION != *"AtLatestKnown"* ]]; then
+        echo "Waiting for subscription to gain status"
+        sleep 1
+        retries=$((retries - 1))
+    fi
+  done
 else
   echo "Please enter the valid location"
   exit 1

@@ -63,3 +63,26 @@ rules:
   - create
   - update
   - patch
+---
+# This role provides the necessary permissions to create admission reviews.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: system:kubefed:admission-requester
+rules:
+- apiGroups:
+  - validation.core.kubefed.k8s.io
+  resources:
+  - federatedtypeconfigs
+  - kubefedclusters
+  - kubefedconfigs
+  verbs:
+  - create
+- apiGroups:
+  - mutation.core.kubefed.k8s.io
+  resources:
+  - kubefedconfigs
+  verbs:
+  - create
+
+

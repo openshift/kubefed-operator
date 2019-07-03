@@ -13,9 +13,12 @@ import (
 
 func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenAPIDefinition {
 	return map[string]common.OpenAPIDefinition{
-		"github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFed":       schema_pkg_apis_operator_v1alpha1_KubeFed(ref),
-		"github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedSpec":   schema_pkg_apis_operator_v1alpha1_KubeFedSpec(ref),
-		"github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedStatus": schema_pkg_apis_operator_v1alpha1_KubeFedStatus(ref),
+		"github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFed":              schema_pkg_apis_operator_v1alpha1_KubeFed(ref),
+		"github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedSpec":          schema_pkg_apis_operator_v1alpha1_KubeFedSpec(ref),
+		"github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedStatus":        schema_pkg_apis_operator_v1alpha1_KubeFedStatus(ref),
+		"github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedWebHook":       schema_pkg_apis_operator_v1alpha1_KubeFedWebHook(ref),
+		"github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedWebHookSpec":   schema_pkg_apis_operator_v1alpha1_KubeFedWebHookSpec(ref),
+		"github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedWebHookStatus": schema_pkg_apis_operator_v1alpha1_KubeFedWebHookStatus(ref),
 	}
 }
 
@@ -96,6 +99,73 @@ func schema_pkg_apis_operator_v1alpha1_KubeFedStatus(ref common.ReferenceCallbac
 						},
 					},
 				},
+			},
+		},
+		Dependencies: []string{},
+	}
+}
+
+func schema_pkg_apis_operator_v1alpha1_KubeFedWebHook(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "KubeFedWebHook is the Schema for the kubefedwebhooks API",
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"),
+						},
+					},
+					"spec": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedWebHookSpec"),
+						},
+					},
+					"status": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedWebHookStatus"),
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedWebHookSpec", "github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1.KubeFedWebHookStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+	}
+}
+
+func schema_pkg_apis_operator_v1alpha1_KubeFedWebHookSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "KubeFedWebHookSpec defines the desired state of KubeFedWebHook",
+				Properties:  map[string]spec.Schema{},
+			},
+		},
+		Dependencies: []string{},
+	}
+}
+
+func schema_pkg_apis_operator_v1alpha1_KubeFedWebHookStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "KubeFedWebHookStatus defines the observed state of KubeFedWebHook",
+				Properties:  map[string]spec.Schema{},
 			},
 		},
 		Dependencies: []string{},
