@@ -15,7 +15,6 @@ ENV BIN_DIR="build/_output/bin" \
 WORKDIR /go/src/github.com/openshift/kubefed-operator
 
 RUN mkdir -p ${BIN_DIR} \
-    && ls -alt * \
     && echo "Building "${PROJECT_NAME}"..." \
     && GOOS=linux GOARCH=amd64 CGO_ENABLED=0 GO111MODULE=off go build -o ${BIN_DIR}/${PROJECT_NAME} -i ${BUILD_PATH}
 
@@ -36,6 +35,8 @@ COPY --from=builder /go/src/github.com/openshift/kubefed-operator/deploy /deploy
 
 COPY --from=builder /go/src/github.com/openshift/kubefed-operator/build/bin /usr/local/bin
 RUN  /usr/local/bin/user_setup
+
+WORKDIR /
 
 ENTRYPOINT ["/usr/local/bin/entrypoint"]
 
