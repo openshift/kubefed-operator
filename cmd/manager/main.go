@@ -39,6 +39,11 @@ func printVersion() {
 	log.Info(fmt.Sprintf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH))
 	log.Info(fmt.Sprintf("Version of operator-sdk: %v", sdkVersion.Version))
 	log.Info(fmt.Sprintf("Operator Version: %v", operatorVersion.Version))
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Error(err, "Got an error when getting the working directory")
+	}
+	log.Info(fmt.Sprintf("Starting dir: %v", dir))
 }
 
 func main() {
