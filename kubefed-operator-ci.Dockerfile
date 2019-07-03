@@ -37,6 +37,8 @@ COPY --from=builder /go/src/github.com/openshift/kubefed-operator/deploy /deploy
 COPY --from=builder /go/src/github.com/openshift/kubefed-operator/build/bin /usr/local/bin
 RUN  /usr/local/bin/user_setup
 
+WORKDIR /
+
 ENTRYPOINT ["/usr/local/bin/entrypoint"]
 
 USER ${USER_UID}
