@@ -247,7 +247,7 @@ spec:
       kind: KubeFedConfig
       name: kubefedconfigs.core.kubefed.k8s.io
       version: v1beta1
-    - description: IngressDNSRecord
+    - description: A resource that associates one or more Kubernetes Ingress and how to access the Kubernetes Ingress resources, with a scheme for constructing Domain Name System (DNS) resource records for the Ingress.
       displayName: IngressDNSRecord 
       kind: IngressDNSRecord
       name: ingressdnsrecords.multiclusterdns.kubefed.k8s.io
@@ -257,12 +257,12 @@ spec:
       kind: PropagatedVersion
       name: propagatedversions.core.kubefed.k8s.io
       version: v1alpha1
-    - description: ReplicaSchedulingPreference
+    - description: It provides an automated mechanism of distributing and maintaining total number of replicas for deployment or replicaset based federated workloads into federated clusters.
       displayName: ReplicaSchedulingPreference
       kind: ReplicaSchedulingPreference
       name: replicaschedulingpreferences.scheduling.kubefed.k8s.io
       version: v1alpha1
-    - description: ServiceDNSRecord
+    - description: A resource that associates one or more Kubernetes Service resources and how to access the Service, with a scheme for constructing Domain Name System (DNS) resource records for the Service.
       displayName: ServiceDNSRecord
       kind: ServiceDNSRecord
       name: servicednsrecords.multiclusterdns.kubefed.k8s.io
