@@ -9,7 +9,6 @@ This work-in-progress section describes how people _developing_ this operator ca
 ### Prerequisites
 - [Kind](https://github.com/kubernetes-sigs/kind) tool
 -  The latest version of [kubefedctl](https://github.com/kubernetes-sigs/kubefed/blob/master/docs/userguide.md#kubefedctl-cli) binary installed in your $PATH 
--  [Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/) for a kubernetes cluster
 -  If you’re planning to test against the openshift cluster then ensure that it’s already up and running.
 -  [Operator-SDK](https://github.com/operator-framework/operator-sdk) CLI tool
 
