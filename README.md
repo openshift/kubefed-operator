@@ -1,3 +1,20 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/openshift/kubefed-operator)](https://goreportcard.com/report/github.com/openshift/kubefed-operator)
+[![LICENSE](https://img.shields.io/badge/license-apache2.0-green.svg)](https://github.com/openshift/kubefed-operator/blob/master/LICENSE)
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [kubefed-operator](#kubefed-operator)
+  - [Deploying and testing](#deploying-and-testing)
+    - [Prerequisites](#prerequisites)
+    - [Using `operator-sdk up local`](#using-operator-sdk-up-local)
+    - [Smoke Testing](#smoke-testing)
+      - [Usage:](#usage)
+      - [Example: for in-cluster deployment](#example-for-in-cluster-deployment)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # kubefed-operator
 
 This repository contains code for an operator for deploying [KubeFed](https://github.com/kubernetes-sigs/kubefed). It is planned to replace the [federation-v2-operator repo](https://github.com/openshift/federation-v2-operator).
