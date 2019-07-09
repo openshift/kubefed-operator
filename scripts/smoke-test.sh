@@ -21,10 +21,8 @@ echo "Scope=$SCOPE"
 
 function setup-infrastructure () {
 
-   if [[ "$LOCATION" != "olm-openshift" && "$LOCATION" != "olm-kube" ]]; then
+   if [[ "$LOCATION" != "olm-openshift" ]]; then
       ./scripts/create-cluster.sh
-   elif test X"$LOCATION" = Xolm-kube; then
-       minikube start
    fi
   
   ./scripts/install-kubefed.sh -n ${NAMESPACE} -d ${LOCATION} -i ${IMAGE_NAME} -s ${SCOPE} &
@@ -50,7 +48,7 @@ function setup-infrastructure () {
 
 function enable-resources () {
 
-if test X"$LOCATION" = Xolm-openshift || test X"$LOCATION" = Xolm-kube ; then
+if test X"$LOCATION" = Xolm-openshift ; then
   # renaming context for openshift cluster to consumable format
   oc config rename-context $(oc config current-context) cluster1
 fi
