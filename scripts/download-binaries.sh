@@ -21,7 +21,6 @@ KUBECTL_VERSION="${KUBECTL_VERSION:-1.15.0}"
 OS=$(go env GOOS)
 ARCH=$(go env GOARCH)
 
-cd ~/tmp
 # Install kubefedctl
 curl "${CURL_ARGS}"O https://github.com/kubernetes-sigs/kubefed/releases/download/v${KUBEFED_VERSION}/kubefedctl-${KUBEFED_VERSION}-${OS}-${ARCH}.tgz 
 

@@ -4,7 +4,7 @@ set -e
 
 ./scripts/download-binaries.sh
 
-mv kubectl kubefedctl /go/bin/
+mv kubectl kubefedctl /go/bin
 
 # Check for Namespaced-scoped deployment
 
