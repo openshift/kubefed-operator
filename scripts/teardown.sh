@@ -24,8 +24,8 @@ echo ">> Uninstalling kubefed operator"
   kubectl delete storageclass ${STORAGECLASS}
   kubectl delete  federatedstorageclass  test-storageclass
   fi
- echo ">> Deleting all the CRD's"
- kubectl delete crd --all
+ echo ">> Deleting all the CRDs related to kubefed"
+ kubectl get crd | awk '/kubefed/{print $1}' | xargs kubectl delete crd
 
 # kill the process id for kubefed-operator process
 echo ">> Kill the kubefed-operator process"

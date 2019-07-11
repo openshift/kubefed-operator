@@ -120,7 +120,15 @@ spec:
   name: ${OPERATOR}
   channel: alpha
 EOF
-
+ retries=20
+  until [[ $retries == 0 || $SUBSCRIPTION =~ "AtLatestKnown" ]]; do
+    SUBSCRIPTION=$(kubectl get subscription -n ${NAMESPACE} -o jsonpath='{.items[*].status.state}' 2>/dev/null)
+    if [[ $SUBSCRIPTION != *"AtLatestKnown"* ]]; then
+        echo "Waiting for subscription to gain status"
+        sleep 1
+        retries=$((retries - 1))
+    fi
+  done
 # olm deployment on openshift cluster   
 elif test X"$LOCATION" = Xolm-openshift; then
  cp $CSV_PATH $CSV_TMP_PATH
@@ -156,6 +164,15 @@ spec:
   name: ${OPERATOR}
   channel: alpha
 EOF
+ retries=20
+  until [[ $retries == 0 || $SUBSCRIPTION =~ "AtLatestKnown" ]]; do
+    SUBSCRIPTION=$(kubectl get subscription -n ${NAMESPACE} -o jsonpath='{.items[*].status.state}' 2>/dev/null)
+    if [[ $SUBSCRIPTION != *"AtLatestKnown"* ]]; then
+        echo "Waiting for subscription to gain status"
+        sleep 1
+        retries=$((retries - 1))
+    fi
+  done
 else
   echo "Please enter the valid location"
   exit 1
