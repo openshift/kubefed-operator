@@ -16,7 +16,7 @@ WORKDIR /go/src/github.com/openshift/kubefed-operator
 
 RUN mkdir -p ${BIN_DIR} \
     && echo "Building "${PROJECT_NAME}"..." \
-    && GOOS=linux GOARCH=amd64 CGO_ENABLED=0 GO111MODULE=off go build -o ${BIN_DIR}/${PROJECT_NAME} -i ${BUILD_PATH}
+    && CGO_ENABLED=0 GO111MODULE=off go build -o ${BIN_DIR}/${PROJECT_NAME} -i ${BUILD_PATH}
 
 FROM registry.access.redhat.com/ubi7-dev-preview/ubi-minimal:7.6
 
