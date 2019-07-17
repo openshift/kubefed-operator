@@ -200,7 +200,7 @@ metadata:
     capabilities: Basic Install
     categories: OpenShift Optional, Integration & Delivery
     certified: "false"
-    containerImage: quay.io/sohankunkerkar/kubefed-operator:v0.1.0
+    containerImage: quay.io/openshift/kubefed-operator:v0.1.0-rc3
     createdAt: "2019-06-14T00:00:00Z"
     description: Gain Hybrid Cloud capabilities between your clusters with Kubernetes
       Federation.
@@ -622,7 +622,7 @@ spec:
                       fieldPath: metadata.name
                 - name: OPERATOR_NAME
                   value: kubefed-operator
-                image: quay.io/sohankunkerkar/kubefed-operator:v0.1.0
+                image: quay.io/openshift/kubefed-operator:v0.1.0-rc3
                 imagePullPolicy: Always
                 name: kubefed-operator
                 resources: {}
