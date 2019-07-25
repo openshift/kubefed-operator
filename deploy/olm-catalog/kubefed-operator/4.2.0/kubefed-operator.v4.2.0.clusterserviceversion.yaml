@@ -27,7 +27,7 @@ metadata:
           "spec": {
             "clusterVersions": {
                "clusterName": "test-cluster",
-               "version": "0.1.0"  
+               "version": "4.2.0"  
                 } 
             }
         },
@@ -149,7 +149,7 @@ metadata:
           "spec": {
             "clusterVersions": {
                "clusterName": "test-cluster",
-               "version": "0.1.0"  
+               "version": "4.2.0"  
                 } 
             }
         },
@@ -216,7 +216,7 @@ metadata:
       Federation.
     repository: https://github.com/openshift/kubefed-operator
     support: Red Hat
-  name: kubefed-operator.v0.1.0
+  name: kubefed-operator.v4.2.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -711,6 +711,8 @@ spec:
                   value: "deploy/resources/controller"
                 - name: WEBHOOK_FILE_NAME
                   value: "deploy/resources/webhook"
+                - name: IMAGE
+                  value: quay.io/kubernetes-multicluster/kubefed:v0.1.0-rc3
                 - name: WATCH_NAMESPACE
                   valueFrom:
                     fieldRef:
@@ -853,4 +855,4 @@ spec:
   maturity: alpha
   provider:
     name: Red Hat
-  version: 0.1.0
+  version: 4.2.0
