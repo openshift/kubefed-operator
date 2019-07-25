@@ -1,0 +1,12 @@
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+spec:
+  tags:
+  - name: ose-kubefed
+    from:
+      kind: DockerImage
+      name: quay.io/kubernetes-multicluster/kubefed
+  - name: ose-kubefed-operator
+    from:
+      kind: DockerImage
+      name: quay.io/openshift/kubefed-operator

@@ -11,7 +11,7 @@ set -e
 NAMESPACE="default"
 LOCATION="local"
 OLM_VERSION="0.10.0"
-OPERATOR_VERSION="0.1.0"
+OPERATOR_VERSION="4.2.0"
 OPERATOR="kubefed-operator"
 IMAGE_NAME="quay.io/openshift/kubefed-operator:v0.1.0-rc3"
 OPERATOR_YAML_PATH="./deploy/operator.yaml"
