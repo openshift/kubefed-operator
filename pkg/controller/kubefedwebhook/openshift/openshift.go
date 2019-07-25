@@ -25,7 +25,7 @@ import (
 	mf "github.com/jcrossley3/manifestival"
 	configv1 "github.com/openshift/api/config/v1"
 	kubefedv1alpha1 "github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1"
-	"github.com/openshift/kubefed-operator/pkg/controller/kubefedwebhook/common"
+	"github.com/openshift/kubefed-operator/pkg/controller/common"
 	v1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"

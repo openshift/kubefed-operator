@@ -8,7 +8,7 @@ import (
 
 	mf "github.com/jcrossley3/manifestival"
 	kubefedv1alpha1 "github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1"
-	"github.com/openshift/kubefed-operator/pkg/controller/kubefedwebhook/common"
+	"github.com/openshift/kubefed-operator/pkg/controller/common"
 	"github.com/openshift/kubefed-operator/version"
 	"github.com/operator-framework/operator-sdk/pkg/predicate"
 	rbacv1 "k8s.io/api/rbac/v1"
