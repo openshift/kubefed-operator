@@ -39,14 +39,18 @@ if test X"$NAMESPACE" != Xdefault; then
     kubectl create ns ${NAMESPACE}
 fi
 
+# Install kubefed webhook CRD
+kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefedwebhook_crd.yaml
 # Install kubefed CRD
 kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefed_crd.yaml
 
 # Install kubefed CR based on the scope
 if test X"$SCOPE" = XCluster; then
-  sed "s,scope:.*,scope: ${SCOPE}," ./deploy/crds/operator_v1alpha1_kubefed_cr.yaml | kubectl apply -n $NAMESPACE -f -
+    sed "s,scope:.*,scope: ${SCOPE}," ./deploy/crds/operator_v1alpha1_kubefed_cr.yaml | kubectl apply -n $NAMESPACE -f -
+    sed "s,scope:.*,scope: ${SCOPE}," ./deploy/crds/operator_v1alpha1_kubefedwebhook_cr.yaml | kubectl apply -n $NAMESPACE -f -
 else
-  kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefed_cr.yaml -n $NAMESPACE
+    kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefed_cr.yaml -n $NAMESPACE
+    kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefedwebhook_cr.yaml -n $NAMESPACE
 fi
 
 

@@ -27,16 +27,20 @@ echo ">> Uninstalling kubefed operator"
  echo ">> Deleting all the CRDs related to kubefed"
  kubectl get crd | awk '/kubefed/{print $1}' | xargs kubectl delete crd
 
-# kill the process id for kubefed-operator process
-echo ">> Kill the kubefed-operator process"
-kill $(ps ax | grep "kubefed-operator" | awk '{print $1}'| head -n 1)
+ # kill the process id for kubefed-operator process
+
+if [[ "$LOCATION" == "local" ]]; then
+    echo ">> Kill the kubefed-operator process"
+    kill $(ps ax | grep "kubefed-operator" | awk '{print $1}'| head -n 1)
+fi
 
 echo ">> Deleting Namespaces"
 if [[ "$LOCATION" == "olm-openshift" && "$NAMESPACE" == "default" ]]; then
-   kubectl delete ns olm
-   kubectl delete ns operators 
+    kubectl delete ns olm
+    kubectl delete ns operators 
 elif test X"$NAMESPACE" != Xdefault ; then
-     kubectl delete ns ${NAMESPACE}
+    echo ">> Deleting the non-default namespace ${NAMESPACE}"
+    kubectl delete ns ${NAMESPACE}
 else
    echo "Skipping this step as ${NAMESPACE} namespace may not be deleted "
 fi
@@ -47,6 +51,6 @@ fi
    # Assumption: openshift-install binary is already installed 
    # and present in the $PATH
    #openshift-install destroy cluster
-    echo "Please delete the openshift cluster on your own!"
+   echo "Please delete the openshift cluster on your own!"
  fi
  

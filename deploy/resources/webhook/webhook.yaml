@@ -1,0 +1,88 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+# For namespace scoped deployments, create a unique cluster-scoped resource
+# using the namespace.
+  name: validations.core.kubefed.k8s.io
+webhooks:
+- name: federatedtypeconfigs.core.kubefed.k8s.io
+  clientConfig:
+    service:
+      name: kubefed-admission-webhook
+      path: /apis/validation.core.kubefed.k8s.io/v1beta1/federatedtypeconfigs
+      namespace: ''
+    caBundle: ''
+  rules:
+  - operations:
+    - CREATE
+    - UPDATE
+    apiGroups:
+    - core.kubefed.k8s.io
+    apiVersions:
+    - v1beta1
+    resources:
+    - federatedtypeconfigs
+    - federatedtypeconfigs/status
+  failurePolicy: Fail
+- name: kubefedclusters.core.kubefed.k8s.io
+  clientConfig:
+    service:
+      name: kubefed-admission-webhook
+      path: /apis/validation.core.kubefed.k8s.io/v1beta1/kubefedclusters
+      namespace: ''
+    caBundle: ''
+  rules:
+  - operations:
+    - CREATE
+    - UPDATE
+    apiGroups:
+    - core.kubefed.k8s.io
+    apiVersions:
+    - v1beta1
+    resources:
+    - kubefedclusters
+  failurePolicy: Fail
+- name: kubefedconfigs.core.kubefed.k8s.io
+  clientConfig:
+    service:
+      name: kubefed-admission-webhook
+      path: /apis/validation.core.kubefed.k8s.io/v1beta1/kubefedconfigs
+      namespace: ''
+    caBundle: ''
+  rules:
+  - operations:
+    - CREATE
+    - UPDATE
+    apiGroups:
+    - core.kubefed.k8s.io
+    apiVersions:
+    - v1beta1
+    resources:
+    - kubefedconfigs
+  failurePolicy: Fail
+---
+# The same comments for ValidatingWebhookConfiguration apply here to
+# MutatingWebhookConfiguration.
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: mutation.core.kubefed.k8s.io
+webhooks:
+- name: kubefedconfigs.core.kubefed.k8s.io
+  clientConfig:
+    service:
+      name: kubefed-admission-webhook
+      path: /apis/mutation.core.kubefed.k8s.io/v1beta1/kubefedconfigs
+      namespace: ''
+    caBundle: ''
+  rules:
+  - operations:
+    - CREATE
+    apiGroups:
+    - core.kubefed.k8s.io
+    apiVersions:
+    - v1beta1
+    resources:
+    - kubefedconfigs
+  failurePolicy: Fail
+
