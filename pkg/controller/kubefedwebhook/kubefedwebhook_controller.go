@@ -267,6 +267,7 @@ func (r *ReconcileKubeFedWebHook) install(instance *kubefedv1alpha1.KubeFedWebHo
 	}
 	fns := extensions.Transform(instance)
 	fns = append(fns, resourceNamespaceUpdate(instance.Spec.Scope, instance.Namespace, instance.Name, r.scheme))
+	fns = append(fns, common.ResourceImageReplace(instance.Namespace, instance.Name))
 
 	preConditionsErr := extensions.PreConditions(instance)
 

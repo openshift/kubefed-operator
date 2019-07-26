@@ -5,11 +5,11 @@ import (
 	"flag"
 	"strings"
 
-	"github.com/operator-framework/operator-sdk/pkg/predicate"
-
 	mf "github.com/jcrossley3/manifestival"
 	kubefedv1alpha1 "github.com/openshift/kubefed-operator/pkg/apis/operator/v1alpha1"
+	"github.com/openshift/kubefed-operator/pkg/controller/common"
 	"github.com/openshift/kubefed-operator/version"
+	"github.com/operator-framework/operator-sdk/pkg/predicate"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -235,6 +235,7 @@ func (r *ReconcileKubeFed) install(instance *kubefedv1alpha1.KubeFed) error {
 	fns := []mf.Transformer{mf.InjectOwner(instance)}
 	fns = append(fns, mf.InjectNamespace(instance.Namespace))
 	fns = append(fns, resourceEnvUpdate(instance.Spec.Scope, instance.Namespace, instance.Name))
+	fns = append(fns, common.ResourceImageReplace(instance.Namespace, instance.Name))
 	fns = append(fns, resourceNamespaceUpdate(instance.Spec.Scope, instance.Namespace, instance.Name))
 	r.config.Transform(fns...)
 

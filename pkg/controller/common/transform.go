@@ -8,8 +8,8 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
-// This is a transform method that replace the deployment resource's image variable value
-func resourceImageReplace(ns, name string) mf.Transformer {
+// ResourceImageReplace is a transform method that replace the deployment resource's image location
+func ResourceImageReplace(ns, name string) mf.Transformer {
 	return func(u *unstructured.Unstructured) error {
 		reqLogger := log.WithValues("Instance.Namespace", ns, "Instance.Name", name)
 		image := os.Getenv("IMAGE")
