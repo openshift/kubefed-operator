@@ -23,7 +23,7 @@ import (
 )
 
 var (
-	filename = flag.String("filename", "deploy/resources",
+	filename = flag.String("filename", "deploy/resources/controller",
 		"The filename containing the YAML resources to apply")
 	recursive = flag.Bool("recursive", false,
 		"If filename is a directory, process all manifests recursively")
@@ -194,28 +194,36 @@ func checkEnvExists(envs []interface{}, envKey, envName string) bool {
 func resourceNamespaceUpdate(scope kubefedv1alpha1.InstallationScope, ns, name string) mf.Transformer {
 	return func(u *unstructured.Unstructured) error {
 		reqLogger := log.WithValues("Instance.Namespace", ns, "Instance.Name", name)
-		if scope == kubefedv1alpha1.InstallationScopeClusterScoped {
-			switch strings.ToLower(u.GetKind()) {
-			case "clusterrolebinding":
-				if subjects, ok, err := unstructured.NestedSlice(u.Object, "subjects"); ok {
-					err = unstructured.SetNestedField(subjects[0].(map[string]interface{}), ns, "namespace")
-					if err != nil {
-						reqLogger.Info("Failed to set the namespace nested field")
-					} else {
-						reqLogger.Info("Added the namespace to the clusterrolebinding subjects element")
-						err = unstructured.SetNestedSlice(u.Object, subjects, "subjects")
+		kind := strings.ToLower(u.GetKind())
+		switch kind {
+		case "clusterrolebinding":
+			fallthrough
+		case "rolebinding":
+			if (kind == "clusterrolebinding" && scope == kubefedv1alpha1.InstallationScopeClusterScoped) ||
+				(kind == "rolebinding") {
+				if subjects, ok, _ := unstructured.NestedSlice(u.Object, "subjects"); ok {
+					if subjectKind, ok, err := unstructured.NestedString(subjects[0].(map[string]interface{}), "kind"); ok && subjectKind == "ServiceAccount" {
+						err = unstructured.SetNestedField(subjects[0].(map[string]interface{}), ns, "namespace")
 						if err != nil {
-							reqLogger.Info("Failed to update the subjects slice")
+							reqLogger.Info("Failed to set the namespace nested field")
+						} else {
+							reqLogger.Info("Added the namespace to the clusterrolebinding subjects element")
+							err = unstructured.SetNestedSlice(u.Object, subjects, "subjects")
+							if err != nil {
+								reqLogger.Info("Failed to update the subjects slice")
+							}
 						}
+					} else {
+						reqLogger.Info("Failed to get the kind of the subject or the kind is not of interest")
 					}
 				} else {
 					reqLogger.Info("Failed to get subjects slice")
 				}
 			}
 		}
+
 		return nil
 	}
-
 }
 
 // Apply the embedded resources

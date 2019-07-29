@@ -1,0 +1,38 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    api: kubefed
+    kubebuilder.k8s.io: 1.0.0
+  name: kubefed-admission-webhook-role
+rules:
+- apiGroups:
+  - core.kubefed.k8s.io
+  resources:
+  - '*'
+  verbs:
+  - get
+  - watch
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: system:kubefed:admission-requester
+rules:
+- apiGroups:
+  - validation.core.kubefed.k8s.io
+  resources:
+  - federatedtypeconfigs
+  - kubefedclusters
+  - kubefedconfigs
+  verbs:
+  - create
+- apiGroups:
+  - mutation.core.kubefed.k8s.io
+  resources:
+  - kubefedconfigs
+  verbs:
+  - create
+

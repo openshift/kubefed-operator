@@ -14,4 +14,4 @@ vet:
 	go vet $(TEST_PKGS)
 
 olm-e2e:
-	echo "OK"
+	./scripts/olm-e2e.sh

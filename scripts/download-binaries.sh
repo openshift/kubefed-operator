@@ -1,16 +1,36 @@
 #!/bin/bash
-VERSION="${VERSION:-v0.1.0-rc3}"
+# This script automates the downloading of binaries 
+# used for smoke testing
+CURL_ARGS="-Ls"
+[[ -z "${DEBUG:-""}" ]] || {
+  set -x
+  CURL_ARGS="-L"
+}
+
+logEnd() {
+  local msg='done.'
+  [ "$1" -eq 0 ] || msg='Error downloading assets'
+  echo "$msg"
+}
+trap 'logEnd $?' EXIT
+
+echo "About to download some binaries. This might take a while..."
+
+KUBEFED_VERSION="${KUBEFED_VERSION:-0.1.0-rc4}"
+KUBECTL_VERSION="${KUBECTL_VERSION:-1.15.0}"
 OS=$(go env GOOS)
 ARCH=$(go env GOARCH)
 
-cd ~/tmp
+# Install kubefedctl
+curl "${CURL_ARGS}"O https://github.com/kubernetes-sigs/kubefed/releases/download/v${KUBEFED_VERSION}/kubefedctl-${KUBEFED_VERSION}-${OS}-${ARCH}.tgz 
 
-wget --continue https://github.com/kubernetes-sigs/kubefed/releases/download/${VERSION}/kubefedctl-${VERSION}-${OS}-${ARCH}.tgz &
-
-tar -xvzf kubefedctl-${VERSION}-${OS}-${ARCH}.tgz
+tar -xvzf kubefedctl-${KUBEFED_VERSION}-${OS}-${ARCH}.tgz
 
 chmod u+x kubefedctl
 
-export PATH=$PATH:/usr/local/bin
+rm kubefedctl-${KUBEFED_VERSION}-${OS}-${ARCH}.tgz
 
-sudo mv kubefedctl /usr/local/bin/ 
+# Install kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
+
+chmod +x ./kubectl

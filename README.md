@@ -82,7 +82,7 @@ $ ./scripts/smoke-test.sh  -n ${NAMESPACE} -d ${LOCATION} -i ${IMAGE_NAME} -s ${
 | -------- | -------- | -------- |
 |n| **Namespace** where you will be installing the kubefed-operator|default|
 |d | **Location** defines the mode of deployment|local|
-|i| Docker **Image** location | quay.io/sohankunkerkar/kubefed-operator:v0.1.0|
+|i| Docker **Image** location | quay.io/openshift/kubefed-operator:v0.1.0-rc3|
 |s|**Scope** of the kubefed resource| Namespaced|
 
  #### Example: for in-cluster deployment 

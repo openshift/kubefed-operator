@@ -47,6 +47,24 @@ rules:
   - '*'
   verbs:
   - '*'
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - '*'
+  verbs:
+  - get
+  - watch
+  - list
+  - update
+  - create
+- apiGroups:
+  - route.openshift.io
+  resources:
+  - 'routes'
+  verbs:
+  - get
+  - watch
+  - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -132,3 +150,22 @@ rules:
   - create
   - update
   - patch
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - '*'
+  verbs:
+  - get
+  - watch
+  - list
+  - update
+  - create
+- apiGroups:
+  - route.openshift.io
+  resources:
+  - 'routes'
+  verbs:
+  - get
+  - watch
+  - list
+  

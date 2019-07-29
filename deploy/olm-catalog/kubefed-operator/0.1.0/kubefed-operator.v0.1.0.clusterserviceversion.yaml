@@ -190,17 +190,27 @@ metadata:
           "apiVersion": "operator.kubefed.io/v1alpha1",
           "kind": "KubeFed",
           "metadata": {
-            "name": "kubefed"
+            "name": "kubefed-resource"
             },
           "spec": {
             "scope": "Namespaced"
+            }
+        },
+        {
+          "apiVersion": "operator.kubefed.io/v1alpha1",
+          "kind": "KubeFedWebHook",
+          "metadata": {
+            "name": "kubefedwebhook-resource"
+            },
+          "spec": {
+            "scope": "Cluster"
             }
         }
       ]
     capabilities: Basic Install
     categories: OpenShift Optional, Integration & Delivery
     certified: "false"
-    containerImage: quay.io/sohankunkerkar/kubefed-operator:v0.1.0
+    containerImage: quay.io/openshift/kubefed-operator:v0.1.0-rc4
     createdAt: "2019-06-14T00:00:00Z"
     description: Gain Hybrid Cloud capabilities between your clusters with Kubernetes
       Federation.
@@ -276,6 +286,15 @@ spec:
         displayName: Version
         path: version
       version: v1alpha1
+    - description: KubeFedWebHook represents an installation of a particular version of KubeFed Webhook
+      displayName: KubeFedWebHook
+      kind: KubeFedWebHook
+      name: kubefedwebhooks.operator.kubefed.io
+      statusDescriptors:
+      - description: The version of KubeFed WebHook installed
+        displayName: Version
+        path: version
+      version: v1alpha1
   description: |
     Kubernetes Federation is a tool to sync (aka "federate") a set of Kubernetes
     objects from a "source" into a set of other clusters. Common use-cases
@@ -323,7 +342,7 @@ spec:
     Before you use kubefed, you should ensure that you're using the binary
     for this version. You can get it from the releases on GitHub.
 
-        curl -Ls https://github.com/kubernetes-sigs/kubefed/releases/download/v0.1.0-rc3/kubefedctl-0.1.0-rc3-linux-amd64.tgz | tar xz
+        curl -Ls https://github.com/kubernetes-sigs/kubefed/releases/download/v0.1.0-rc4/kubefedctl-0.1.0-rc4-linux-amd64.tgz | tar xz
 
     ### Joining Clusters
 
@@ -589,6 +608,83 @@ spec:
           - create
           - update
           - patch
+        - apiGroups:
+          - admissionregistration.k8s.io
+          resources:
+          - '*'
+          verbs:
+          - get
+          - watch
+          - list
+          - update
+          - create
+        - apiGroups:
+          - route.openshift.io
+          resources:
+          - routes
+          verbs:
+          - get
+          - watch
+          - list
+        - apiGroups:
+          - admission.core.kubefed.k8s.io
+          resources:
+          - "*"
+          verbs:
+          - get
+          - watch
+          - list
+          - create
+          - update
+        - apiGroups:
+          - authorization.k8s.io
+          resources:
+          - "*"
+          verbs:
+          - get
+          - watch
+          - list
+          - create
+          - update
+        - apiGroups:
+          - authentication.k8s.io
+          resources:
+          - "*"
+          verbs:
+          - get
+          - watch
+          - list
+          - create
+          - update
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          verbs:
+          - get
+          - list
+          - create
+          - update
+        - apiGroups:
+          - "mutation.core.kubefed.k8s.io"
+          resources:
+          - kubefedconfigs
+          verbs:
+          - get
+          - list
+          - create
+          - update
+        - apiGroups:
+          - "validation.core.kubefed.k8s.io"
+          resources:
+          - kubefedconfigs
+          - federatedtypeconfigs
+          - kubefedclusters
+          verbs:
+          - get
+          - list
+          - create
+          - update
         serviceAccountName: kubefed-operator
       deployments:
       - name: kubefed-operator
@@ -607,22 +703,25 @@ spec:
               - args:
                 - --filename=$(FILE_NAME)
                 - --recursive=true
+                - --webhookfilename=$(WEBHOOK_FILE_NAME)
                 command:
                 - kubefed-operator
                 env:
                 - name: FILE_NAME
-                  value: "deploy/resources"
+                  value: "deploy/resources/controller"
+                - name: WEBHOOK_FILE_NAME
+                  value: "deploy/resources/webhook"
                 - name: WATCH_NAMESPACE
                   valueFrom:
                     fieldRef:
-                      fieldPath: metadata.namespace
+                      fieldPath: metadata.annotations['olm.targetNamespaces']
                 - name: POD_NAME
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.name
                 - name: OPERATOR_NAME
                   value: kubefed-operator
-                image: quay.io/sohankunkerkar/kubefed-operator:v0.1.0
+                image: quay.io/openshift/kubefed-operator:v0.1.0-rc4
                 imagePullPolicy: Always
                 name: kubefed-operator
                 resources: {}
@@ -669,9 +768,62 @@ spec:
         - apiGroups:
           - operator.kubefed.io
           resources:
-          - '*'
+          - kubefedwebhooks/finalizers
+          - kubefedwebhooks/status
+          - kubefeds/status
+          - kubefeds/finalizers
+          - kubefeds
+          - kubefedwebhooks
           verbs:
           - '*'
+        - apiGroups:
+          - admissionregistration.k8s.io
+          resources:
+          - '*'
+          verbs:
+          - get
+          - watch
+          - list
+          - update
+          - create
+        - apiGroups:
+          - route.openshift.io
+          resources:
+          - routes
+          verbs:
+          - get
+          - watch
+          - list
+        - apiGroups:
+          - admission.core.kubefed.k8s.io
+          resources:
+          - "*"
+          verbs:
+          - get
+          - watch
+          - list
+          - create
+          - update
+        - apiGroups:
+          - authorization.k8s.io
+          resources:
+          - "*"
+          verbs:
+          - get
+          - watch
+          - list
+          - create
+          - update
+        - apiGroups:
+          - authentication.k8s.io
+          resources:
+          - "*"
+          verbs:
+          - get
+          - watch
+          - list
+          - create
+          - update
         serviceAccountName: kubefed-operator
     strategy: deployment
   installModes:
