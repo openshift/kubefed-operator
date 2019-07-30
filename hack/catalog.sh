@@ -1,10 +1,10 @@
 #!/bin/bash
 
 CSV_FILE=$1
+OPERATOR_VERSION=$2
 DIR=${DIR:-$(cd $(dirname "$0")/.. && pwd)}
 NAME=${NAME:-$(ls $DIR/deploy/olm-catalog)}
 # Use the latest version of operator for testing
-OPERATOR_VERSION=${OPERATOR_VERSION:-0.1.0}
 
 x=( $(echo $NAME | tr '-' ' ') )
 DISPLAYNAME=${DISPLAYNAME:=${x[*]^}}

@@ -1,5 +1,5 @@
 packageName: kubefed-operator
 channels:
 - name: alpha
-  currentCSV: kubefed-operator.v0.1.0
+  currentCSV: kubefed-operator.v4.2.0
   

@@ -13,26 +13,41 @@ LOCATION="local"
 OLM_VERSION="0.10.0"
 OPERATOR_VERSION="0.1.0"
 OPERATOR="kubefed-operator"
-IMAGE_NAME="quay.io/openshift/kubefed-operator:v0.1.0-rc3"
+IMAGE_NAME="quay.io/openshift/kubefed-operator:v0.1.0-rc4"
 OPERATOR_YAML_PATH="./deploy/operator.yaml"
 CLUSTER_ROLEBINDING="./deploy/role_binding.yaml"
-CSV_PATH="./deploy/olm-catalog/kubefed-operator/${OPERATOR_VERSION}/kubefed-operator.v${OPERATOR_VERSION}.clusterserviceversion.yaml"
 CSV_TMP_PATH="./tmp_csv.yaml"
 SCOPE="Namespaced"
 
-while getopts “n:d:i:s:” opt; do
+while getopts “n:d:i:s:o:” opt; do
     case $opt in
 	n) NAMESPACE=$OPTARG ;;
 	d) LOCATION=$OPTARG ;;
         i) IMAGE_NAME=$OPTARG ;;
         s) SCOPE=$OPTARG;;
+	o) OPERATOR_VERSION=$OPTARG;;
     esac
 done
+
+#The operator version is either 0.1.0 style or 4.2 style and the csv files are named as 0.1.0.clusterserviceversion.yaml or 4.2.0.clusterserviceversion.yaml
+
+function get_csv_file_name {
+    if [ $1 == "0.1.0" ]; then
+	echo "kubefed-operator.v$1.clusterserviceversion.yaml"
+    else
+	echo "kubefed-operator.v$1.0.clusterserviceversion.yaml"
+    fi
+}
+    
+CSV_FILE_NAME=$(get_csv_file_name "${OPERATOR_VERSION}")
+echo "$CSV_FILE_NAME"
+CSV_PATH="./deploy/olm-catalog/kubefed-operator/${OPERATOR_VERSION}/${CSV_FILE_NAME}"
 
 echo "NS=$NAMESPACE"
 echo "LOC=$LOCATION"
 echo "Operator Image Name=$IMAGE_NAME"
 echo "Scope=$SCOPE"
+echo "Operator version=$OPERATOR_VERSION"
 
 if test X"$NAMESPACE" != Xdefault; then
     # create a namespace 
@@ -44,15 +59,15 @@ kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefedwebhook_crd.yaml
 # Install kubefed CRD
 kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefed_crd.yaml
 
+# Install the webhook CR at Cluster scope
+kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefedwebhook_cr.yaml -n $NAMESPACE
 # Install kubefed CR based on the scope
+
 if test X"$SCOPE" = XCluster; then
     sed "s,scope:.*,scope: ${SCOPE}," ./deploy/crds/operator_v1alpha1_kubefed_cr.yaml | kubectl apply -n $NAMESPACE -f -
-    sed "s,scope:.*,scope: ${SCOPE}," ./deploy/crds/operator_v1alpha1_kubefedwebhook_cr.yaml | kubectl apply -n $NAMESPACE -f -
 else
     kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefed_cr.yaml -n $NAMESPACE
-    kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefedwebhook_cr.yaml -n $NAMESPACE
 fi
-
 
 # A local deployment
 if test X"$LOCATION" = Xlocal; then
@@ -94,7 +109,7 @@ elif test X"$LOCATION" = Xolm-kube; then
  cp $CSV_PATH $CSV_TMP_PATH
  chmod +w $CSV_TMP_PATH
  sed "s,image: quay.*$,image: ${IMAGE_NAME}," -i $CSV_TMP_PATH
- ./hack/catalog.sh $CSV_TMP_PATH | kubectl apply -n $NAMESPACE -f -
+ ./hack/catalog.sh $CSV_TMP_PATH "${OPERATOR_VERSION}" | kubectl apply -n $NAMESPACE -f -
  rm $CSV_TMP_PATH
  cat <<-EOF | kubectl apply -f -
 ---
@@ -138,7 +153,7 @@ elif test X"$LOCATION" = Xolm-openshift; then
  cp $CSV_PATH $CSV_TMP_PATH
  chmod +w $CSV_TMP_PATH
  sed "s,image: quay.*$,image: ${IMAGE_NAME}," -i $CSV_TMP_PATH
- ./hack/catalog.sh $CSV_TMP_PATH | oc apply -n $NAMESPACE -f -
+ ./hack/catalog.sh $CSV_TMP_PATH "${OPERATOR_VERSION}" | oc apply -n $NAMESPACE -f -
  rm $CSV_TMP_PATH
  cat <<-EOF | oc apply -f -
 ---
