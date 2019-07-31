@@ -43,7 +43,7 @@ function setup-infrastructure () {
       echo "Failed to retrieve kubefedconfig resource"
       POD_STATUS=`oc get pods -n ${NAMESPACE}`
       echo "Pod Statuses: ${POD_STATUS}"
-      OPERATOR_POD=`oc get pods -n foo | grep kubefed-operator | cut -f1 -d ' '`
+      OPERATOR_POD=`oc get pods -n ${NAMESPACE} | grep "kubefed-operator" | cut -f1 -d ' '`
       echo "Operator pod log: "
       POD_LOG=`oc logs ${OPERATOR_POD} -n ${NAMESPACE}`
       echo "${POD_LOG}"
