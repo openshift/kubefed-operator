@@ -4,9 +4,9 @@ metadata:
   creationTimestamp: null
   labels:
     controller-tools.k8s.io: "1.0"
-  name: federatedtypeconfigs.core.kubefed.k8s.io
+  name: federatedtypeconfigs.core.kubefed.io
 spec:
-  group: core.kubefed.k8s.io
+  group: core.kubefed.io
   names:
     kind: FederatedTypeConfig
     plural: federatedtypeconfigs

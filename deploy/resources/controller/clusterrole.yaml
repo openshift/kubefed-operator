@@ -8,7 +8,7 @@ metadata:
   name: kubefed-role
 rules:
 - apiGroups:
-  - scheduling.kubefed.k8s.io
+  - scheduling.kubefed.io
   resources:
   - '*'
   verbs:
@@ -17,7 +17,7 @@ rules:
   - list
   - update
 - apiGroups:
-  - multiclusterdns.kubefed.k8s.io
+  - multiclusterdns.kubefed.io
   resources:
   - '*'
   verbs:
@@ -28,7 +28,7 @@ rules:
   - update
   - delete
 - apiGroups:
-  - core.kubefed.k8s.io
+  - core.kubefed.io
   resources:
   - '*'
   verbs:
@@ -38,7 +38,7 @@ rules:
   - create
   - update
 - apiGroups:
-  - types.kubefed.k8s.io
+  - types.kubefed.io
   resources:
   - '*'
   verbs:
@@ -71,7 +71,7 @@ metadata:
   name: system:kubefed:admission-requester
 rules:
 - apiGroups:
-  - validation.core.kubefed.k8s.io
+  - validation.core.kubefed.io
   resources:
   - federatedtypeconfigs
   - kubefedclusters
@@ -79,7 +79,7 @@ rules:
   verbs:
   - create
 - apiGroups:
-  - mutation.core.kubefed.k8s.io
+  - mutation.core.kubefed.io
   resources:
   - kubefedconfigs
   verbs:

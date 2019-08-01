@@ -4,7 +4,7 @@ metadata:
   creationTimestamp: null
   labels:
     controller-tools.k8s.io: "1.0"
-  name: kubefedclusters.core.kubefed.k8s.io
+  name: kubefedclusters.core.kubefed.io
 spec:
   additionalPrinterColumns:
   - JSONPath: .status.conditions[?(@.type=='Ready')].status
@@ -13,7 +13,7 @@ spec:
   - JSONPath: .metadata.creationTimestamp
     name: age
     type: date
-  group: core.kubefed.k8s.io
+  group: core.kubefed.io
   names:
     kind: KubeFedCluster
     plural: kubefedclusters

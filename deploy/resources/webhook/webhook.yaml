@@ -3,13 +3,13 @@ kind: ValidatingWebhookConfiguration
 metadata:
 # For namespace scoped deployments, create a unique cluster-scoped resource
 # using the namespace.
-  name: validations.core.kubefed.k8s.io
+  name: validations.core.kubefed.io
 webhooks:
-- name: federatedtypeconfigs.core.kubefed.k8s.io
+- name: federatedtypeconfigs.core.kubefed.io
   clientConfig:
     service:
       name: kubefed-admission-webhook
-      path: /apis/validation.core.kubefed.k8s.io/v1beta1/federatedtypeconfigs
+      path: /apis/validation.core.kubefed.io/v1beta1/federatedtypeconfigs
       namespace: ''
     caBundle: ''
   rules:
@@ -17,18 +17,18 @@ webhooks:
     - CREATE
     - UPDATE
     apiGroups:
-    - core.kubefed.k8s.io
+    - core.kubefed.io
     apiVersions:
     - v1beta1
     resources:
     - federatedtypeconfigs
     - federatedtypeconfigs/status
   failurePolicy: Fail
-- name: kubefedclusters.core.kubefed.k8s.io
+- name: kubefedclusters.core.kubefed.io
   clientConfig:
     service:
       name: kubefed-admission-webhook
-      path: /apis/validation.core.kubefed.k8s.io/v1beta1/kubefedclusters
+      path: /apis/validation.core.kubefed.io/v1beta1/kubefedclusters
       namespace: ''
     caBundle: ''
   rules:
@@ -36,17 +36,17 @@ webhooks:
     - CREATE
     - UPDATE
     apiGroups:
-    - core.kubefed.k8s.io
+    - core.kubefed.io
     apiVersions:
     - v1beta1
     resources:
     - kubefedclusters
   failurePolicy: Fail
-- name: kubefedconfigs.core.kubefed.k8s.io
+- name: kubefedconfigs.core.kubefed.io
   clientConfig:
     service:
       name: kubefed-admission-webhook
-      path: /apis/validation.core.kubefed.k8s.io/v1beta1/kubefedconfigs
+      path: /apis/validation.core.kubefed.io/v1beta1/kubefedconfigs
       namespace: ''
     caBundle: ''
   rules:
@@ -54,7 +54,7 @@ webhooks:
     - CREATE
     - UPDATE
     apiGroups:
-    - core.kubefed.k8s.io
+    - core.kubefed.io
     apiVersions:
     - v1beta1
     resources:
@@ -66,20 +66,20 @@ webhooks:
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: MutatingWebhookConfiguration
 metadata:
-  name: mutation.core.kubefed.k8s.io
+  name: mutation.core.kubefed.io
 webhooks:
-- name: kubefedconfigs.core.kubefed.k8s.io
+- name: kubefedconfigs.core.kubefed.io
   clientConfig:
     service:
       name: kubefed-admission-webhook
-      path: /apis/mutation.core.kubefed.k8s.io/v1beta1/kubefedconfigs
+      path: /apis/mutation.core.kubefed.io/v1beta1/kubefedconfigs
       namespace: ''
     caBundle: ''
   rules:
   - operations:
     - CREATE
     apiGroups:
-    - core.kubefed.k8s.io
+    - core.kubefed.io
     apiVersions:
     - v1beta1
     resources:
