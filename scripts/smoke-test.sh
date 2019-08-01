@@ -3,21 +3,23 @@
 #Default values
 NAMESPACE="${NAMESPACE:-default}"
 LOCATION="${LOCATION:-local}"
-VERSION="${VERSION:-v0.1.0-rc3}"
-IMAGE_NAME="${IMAGE_NAME:-quay.io/openshift/kubefed-operator:v0.1.0-rc3}"
+VERSION="${VERSION:-v0.1.0-rc4}"
+IMAGE_NAME="${IMAGE_NAME:-quay.io/openshift/kubefed-operator:v0.1.0-rc4}"
 SCOPE="${SCOPE:-Namespaced}"
-while getopts “n:d:i:s:” opt; do
+while getopts “n:d:i:s:o:” opt; do
     case $opt in
 	n) NAMESPACE=$OPTARG ;;
 	d) LOCATION=$OPTARG ;;
         i) IMAGE_NAME=$OPTARG ;;
         s) SCOPE=$OPTARG;;
+	o) OPERATOR_VERSION=$OPTARG;;
     esac
 done
 echo "NS=$NAMESPACE"
 echo "LOC=$LOCATION"
 echo "Operator Image Name=$IMAGE_NAME"
 echo "Scope=$SCOPE"
+echo "Operator Version=$OPERATOR_VERSION"
 
 function setup-infrastructure () {
 
@@ -25,7 +27,7 @@ function setup-infrastructure () {
       ./scripts/create-cluster.sh
    fi
   
-  ./scripts/install-kubefed.sh -n ${NAMESPACE} -d ${LOCATION} -i ${IMAGE_NAME} -s ${SCOPE} &
+  ./scripts/install-kubefed.sh -n ${NAMESPACE} -d ${LOCATION} -i ${IMAGE_NAME} -s ${SCOPE} -o ${OPERATOR_VERSION} &
 
   retries=100
   until [[ $retries == 0 || $RESOURCE =~ "kubefed" ]]; do
@@ -38,7 +40,13 @@ function setup-infrastructure () {
   done
 
   if [ $retries == 0 ]; then
-    echo "Failed to retrieve kubefedconfig resource"
+      echo "Failed to retrieve kubefedconfig resource"
+      POD_STATUS=`oc get pods -n ${NAMESPACE}`
+      echo "Pod Statuses: ${POD_STATUS}"
+      OPERATOR_POD=`oc get pods -n ${NAMESPACE} | grep "kubefed-operator" | cut -f1 -d ' '`
+      echo "Operator pod log: "
+      POD_LOG=`oc logs ${OPERATOR_POD} -n ${NAMESPACE}`
+      echo "${POD_LOG}"
     exit 1
   fi
 
