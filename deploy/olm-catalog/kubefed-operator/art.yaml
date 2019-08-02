@@ -7,7 +7,7 @@ updates:
     # replace entire version line, otherwise would replace 4.2.0 anywhere
     - search: "version: 4.2.0"
       replace: "version: {FULL_VER}"
-  - file: "kubefed-operator-package.yaml"
+  - file: "kubefed-operator.package.yaml"
     update_list:
     - search: "currentCSV: kubefed-operator.v{MAJOR}.{MINOR}.0"
       replace: "currentCSV: kubefed-operator.{FULL_VER}"
