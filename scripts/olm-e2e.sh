@@ -19,7 +19,11 @@ if [ ${GIT_BRANCH} = master ] ; then
     OPERATOR_VERSION="0.1.0"
 elif [ X`echo "${GIT_BRANCH}" | awk -F "release-" '{print $2}'` != X ]; then
     RELEASE_BRANCH=`echo "${GIT_BRANCH}" | awk -F "release-" '{print $2}'`
-    OPERATOR_VERSION="${RELEASE_BRANCH}"
+    if [ X`echo "${RELEASE_BRANCH}" | awk -F "0.1.0" '{print $2}'` != X ]; then
+	OPERATOR_VERSION="0.1.0"
+    else 
+	OPERATOR_VERSION="${RELEASE_BRANCH}"
+    fi
 else
     RELEASE_BRANCH=`echo "${GIT_BRANCH}" | awk -F "release-" '{print $2}'`
     echo "${RELEASE_BRANCH}"
