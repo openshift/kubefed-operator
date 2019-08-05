@@ -5,8 +5,8 @@ spec:
   - name: kubefed
     from:
       kind: DockerImage
-      name: quay.io/kubernetes-multicluster/kubefed
+      name: quay.io/kubernetes-multicluster/kubefed:v0.1.0-rc3
   - name: kubefed-operator
     from:
       kind: DockerImage
-      name: quay.io/openshift/kubefed-operator
+      name: quay.io/openshift/kubefed-operator:v0.1.0-rc5
