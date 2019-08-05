@@ -4,9 +4,9 @@ metadata:
   creationTimestamp: null
   labels:
     controller-tools.k8s.io: "1.0"
-  name: federatedservicestatuses.core.kubefed.k8s.io
+  name: federatedservicestatuses.core.kubefed.io
 spec:
-  group: core.kubefed.k8s.io
+  group: core.kubefed.io
   names:
     kind: FederatedServiceStatus
     plural: federatedservicestatuses

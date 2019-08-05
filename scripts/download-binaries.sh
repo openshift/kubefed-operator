@@ -16,7 +16,7 @@ trap 'logEnd $?' EXIT
 
 echo "About to download some binaries. This might take a while..."
 
-KUBEFED_VERSION="${KUBEFED_VERSION:-0.1.0-rc3}"
+KUBEFED_VERSION="${KUBEFED_VERSION:-0.1.0-rc5}"
 KUBECTL_VERSION="${KUBECTL_VERSION:-1.15.0}"
 OS=$(go env GOOS)
 ARCH=$(go env GOARCH)

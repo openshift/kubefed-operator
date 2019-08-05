@@ -3,8 +3,8 @@
 #Default values
 NAMESPACE="${NAMESPACE:-default}"
 LOCATION="${LOCATION:-local}"
-VERSION="${VERSION:-v0.1.0-rc4}"
-IMAGE_NAME="${IMAGE_NAME:-quay.io/openshift/kubefed-operator:v0.1.0-rc4}"
+VERSION="${VERSION:-v0.1.0-rc5}"
+IMAGE_NAME="${IMAGE_NAME:-quay.io/openshift/kubefed-operator:v0.1.0-rc5}"
 SCOPE="${SCOPE:-Namespaced}"
 while getopts “n:d:i:s:o:” opt; do
     case $opt in
@@ -71,7 +71,7 @@ kubefedctl enable configmaps --kubefed-namespace=${NAMESPACE}
 echo "Creating a FederatedConfigMap resource"
 
 cat <<EOF | kubectl --namespace=${NAMESPACE} apply -f -
-apiVersion: types.kubefed.k8s.io/v1beta1
+apiVersion: types.kubefed.io/v1beta1
 kind: FederatedConfigMap
 metadata:
   name: test-configmap
@@ -108,7 +108,7 @@ echo "Enable FederatedTypeconfigs"
 kubefedctl enable storageclass --kubefed-namespace=${NAMESPACE}
 echo "Creating a FederatedStorageClass resource"
 cat <<EOF | kubectl apply -f -
-apiVersion: types.kubefed.k8s.io/v1beta1                                                                                                                                                      
+apiVersion: types.kubefed.io/v1beta1                                                                                                                                                      
 kind: FederatedStorageClass                                                                                                                                                                    
 metadata:                                                                                                                                                                                      
  name: test-storageclass                                                                                                                                                                      

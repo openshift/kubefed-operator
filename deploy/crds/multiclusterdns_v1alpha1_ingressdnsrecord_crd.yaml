@@ -4,9 +4,9 @@ metadata:
   creationTimestamp: null
   labels:
     controller-tools.k8s.io: "1.0"
-  name: ingressdnsrecords.multiclusterdns.kubefed.k8s.io
+  name: ingressdnsrecords.multiclusterdns.kubefed.io
 spec:
-  group: multiclusterdns.kubefed.k8s.io
+  group: multiclusterdns.kubefed.io
   names:
     kind: IngressDNSRecord
     plural: ingressdnsrecords
