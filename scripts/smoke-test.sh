@@ -29,7 +29,7 @@ function setup-infrastructure () {
   
   ./scripts/install-kubefed.sh -n ${NAMESPACE} -d ${LOCATION} -i ${IMAGE_NAME} -s ${SCOPE} -o ${OPERATOR_VERSION} &
 
-  retries=300
+  retries=100
   until [[ $retries == 0 || $RESOURCE =~ "kubefed" ]]; do
     RESOURCE=$(kubectl get kubefedconfig -n ${NAMESPACE} -o jsonpath='{.items[*].metadata.name}' 2>/dev/null)
     if [[ $RESOURCE != *"kubefed"* ]]; then
