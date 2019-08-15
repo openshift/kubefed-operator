@@ -63,7 +63,7 @@ kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefed_crd.yaml
 kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefedwebhook_cr.yaml -n $NAMESPACE
 # Install kubefed CR based on the scope
 
-if test X"$SCOPE" = XCluster; then
+if test X"$SCOPE" = XNamespaced; then
     sed "s,scope:.*,scope: ${SCOPE}," ./deploy/crds/operator_v1alpha1_kubefed_cr.yaml | kubectl apply -n $NAMESPACE -f -
 else
     kubectl apply -f ./deploy/crds/operator_v1alpha1_kubefed_cr.yaml -n $NAMESPACE
