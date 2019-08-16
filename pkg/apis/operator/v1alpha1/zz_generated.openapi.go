@@ -109,7 +109,7 @@ func schema_pkg_apis_operator_v1alpha1_KubeFedWebHook(ref common.ReferenceCallba
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Description: "KubeFedWebHook is the Schema for the kubefedwebhooks API",
+				Description: "KubeFedWebHook is the Schema for the installs API",
 				Properties: map[string]spec.Schema{
 					"kind": {
 						SchemaProps: spec.SchemaProps{
@@ -165,7 +165,15 @@ func schema_pkg_apis_operator_v1alpha1_KubeFedWebHookStatus(ref common.Reference
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
 				Description: "KubeFedWebHookStatus defines the observed state of KubeFedWebHook",
-				Properties:  map[string]spec.Schema{},
+				Properties: map[string]spec.Schema{
+					"version": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The version of the installed release",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
 			},
 		},
 		Dependencies: []string{},

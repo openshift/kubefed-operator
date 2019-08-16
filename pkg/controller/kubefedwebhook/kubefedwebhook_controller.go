@@ -127,32 +127,9 @@ func (r *ReconcileKubeFedWebHook) Reconcile(request reconcile.Request) (reconcil
 	return reconcile.Result{}, nil
 }
 
-// This is a transform method that ignores clusterrole and clusterrolebinding
-// resources for namespace scoped deployment of kubefed-operator
-func resourceScopeFilter(resources []unstructured.Unstructured, scope kubefedv1alpha1.InstallationScope) []unstructured.Unstructured {
-	if scope != kubefedv1alpha1.InstallationScopeNamespaceScoped {
-		return resources
-	}
-
-	filtered := []unstructured.Unstructured{}
-
-	for i := range resources {
-		switch strings.ToLower(resources[i].GetKind()) {
-		case "clusterrole":
-			fallthrough
-		case "clusterrolebinding":
-			continue
-		default:
-			filtered = append(filtered, resources[i])
-		}
-	}
-
-	return filtered
-}
-
 // This is a transform method that updates the namespace field of the clusterrolebinding resource
 // for cluster scoped deployment
-func resourceNamespaceUpdate(scope kubefedv1alpha1.InstallationScope, ns, name string, scheme *runtime.Scheme) mf.Transformer {
+func resourceNamespaceUpdate(ns, name string, scheme *runtime.Scheme) mf.Transformer {
 	return func(u *unstructured.Unstructured) error {
 		reqLogger := log.WithValues("Instance.Namespace", ns, "Instance.Name", name)
 		switch strings.ToLower(u.GetKind()) {
@@ -188,29 +165,6 @@ func resourceNamespaceUpdate(scope kubefedv1alpha1.InstallationScope, ns, name s
 					return err
 				} else {
 					reqLogger.Info(fmt.Sprintf("Dumping rolebinding yaml: %+v", roleBinding))
-				}
-
-				if scope == kubefedv1alpha1.InstallationScopeNamespaceScoped {
-					//make the rolebinding name unique for multiple namespace scoped deployments.
-					u.SetName(fmt.Sprintf("%s:%s", u.GetName(), name))
-				}
-			}
-			if u.GetName() == "kubefed-admission-webhook:auth-delegator" {
-				if scope == kubefedv1alpha1.InstallationScopeNamespaceScoped {
-					//make the rolebinding name unique for multiple namespace scoped deployments.
-					u.SetName(fmt.Sprintf("%s:%s", u.GetName(), name))
-				}
-			}
-			if u.GetName() == "kubefed-admission-webhook:anonymous-auth" {
-				if scope == kubefedv1alpha1.InstallationScopeNamespaceScoped {
-					//make the rolebinding name unique for multiple namespace scoped deployments.
-					u.SetName(fmt.Sprintf("%s:%s", u.GetName(), name))
-					// updatedAdmissionRequesterName := fmt.Sprintf("system:kubefed:admission-requester:%s", name)
-					// err := unstructured.SetNestedField(u.Object(), updatedAdmissionRequesterName, "roleRef", "name")
-					// if err != nil {
-					// 	reqLogger.Info("Failed to set the admission requester name in the role ref")
-					// 	return err
-					// }
 				}
 			}
 
@@ -256,9 +210,6 @@ func (r *ReconcileKubeFedWebHook) updateStatus(instance *kubefedv1alpha1.KubeFed
 // Apply the embedded resources
 func (r *ReconcileKubeFedWebHook) install(instance *kubefedv1alpha1.KubeFedWebHook) error {
 	defer r.updateStatus(instance)
-	// filter out resources we don't want
-	filteredResources := resourceScopeFilter(r.config.Resources, instance.Spec.Scope)
-	r.config.Resources = filteredResources
 	// Transform resources as appropriate
 
 	extensions, err := platforms.Extend(r.client, r.scheme)
@@ -266,7 +217,7 @@ func (r *ReconcileKubeFedWebHook) install(instance *kubefedv1alpha1.KubeFedWebHo
 		return err
 	}
 	fns := extensions.Transform(instance)
-	fns = append(fns, resourceNamespaceUpdate(instance.Spec.Scope, instance.Namespace, instance.Name, r.scheme))
+	fns = append(fns, resourceNamespaceUpdate(instance.Namespace, instance.Name, r.scheme))
 	fns = append(fns, common.ResourceImageReplace(instance.Namespace, instance.Name))
 
 	preConditionsErr := extensions.PreConditions(instance)
