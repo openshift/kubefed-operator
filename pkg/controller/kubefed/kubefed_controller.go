@@ -150,22 +150,27 @@ func resourceEnvUpdate(scope kubefedv1alpha1.InstallationScope, ns, name string)
 		case "deployment":
 			if containers, ok, err := unstructured.NestedSlice(u.Object,
 				"spec", "template", "spec", "containers"); ok {
-				if envs, envOk, envErr := unstructured.NestedSlice(containers[0].(map[string]interface{}), "env"); envOk {
-					if !checkEnvExists(envs, "name", "DEFAULT_KUBEFED_SCOPE") {
-						fse := map[string]interface{}{"name": "DEFAULT_KUBEFED_SCOPE", "value": kubefedScope}
-						envs = append(envs, fse)
+				envs, envOk, envErr := unstructured.NestedSlice(containers[0].(map[string]interface{}), "env")
+				if !envOk {
+					envs = make([]interface{}, 0)
+					if err := unstructured.SetNestedSlice(containers[0].(map[string]interface{}), envs, "env"); err != nil {
+						reqLogger.Info("Failed to set the env slice field")
+					} else {
+						reqLogger.Info("Created the env slice for setting the environment variables")
 					}
-					reqLogger.Info("Transforming deployment resource for environment update - env; ", "envs", envs)
-					envErr = unstructured.SetNestedSlice(containers[0].(map[string]interface{}), envs, "env")
-					if envErr != nil {
-						reqLogger.Info("Failed to update the environment")
-					}
-					err = unstructured.SetNestedSlice(u.Object, containers, "spec", "template", "spec", "containers")
-					if err != nil {
-						reqLogger.Info("Failed to update the container array")
-					}
-				} else {
-					reqLogger.Info("Failed to get the env array")
+				}
+				if !checkEnvExists(envs, "name", "DEFAULT_KUBEFED_SCOPE") {
+					fse := map[string]interface{}{"name": "DEFAULT_KUBEFED_SCOPE", "value": kubefedScope}
+					envs = append(envs, fse)
+				}
+				reqLogger.Info("Transforming deployment resource for environment update - env; ", "envs", envs)
+				envErr = unstructured.SetNestedSlice(containers[0].(map[string]interface{}), envs, "env")
+				if envErr != nil {
+					reqLogger.Info("Failed to update the environment")
+				}
+				err = unstructured.SetNestedSlice(u.Object, containers, "spec", "template", "spec", "containers")
+				if err != nil {
+					reqLogger.Info("Failed to update the container array")
 				}
 			} else {
 				fooLogger := log.WithValues("namespace", ns, "name", name, "scope", scope, "error", err)

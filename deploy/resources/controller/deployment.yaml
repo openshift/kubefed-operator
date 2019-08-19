@@ -21,11 +21,7 @@ spec:
     spec:
       serviceAccountName: kubefed-controller
       containers:
-      - args:
-        - --kubefed-namespace=$(KUBEFED_NAMESPACE)
-        - -v=5
-        - --logtostderr
-        command:
+      - command:
         - /hyperfed/controller-manager
         image: quay.io/kubernetes-multicluster/kubefed:v0.1.0-rc5
         imagePullPolicy: Always
@@ -44,9 +40,4 @@ spec:
           requests:
             cpu: 100m
             memory: 64Mi
-        env:
-        - name: KUBEFED_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
       terminationGracePeriodSeconds: 10
