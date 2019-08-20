@@ -193,7 +193,7 @@ metadata:
             "name": "kubefed-resource"
             },
           "spec": {
-            "scope": "Namespaced"
+            "scope": "Cluster"
             }
         },
         {
