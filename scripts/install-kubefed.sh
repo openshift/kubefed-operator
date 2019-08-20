@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This script will create a namespace and deploy all the crds within the same
 # namespace

@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-#Default values
+# Default values
 NAMESPACE="${NAMESPACE:-default}"
 LOCATION="${LOCATION:-local}"
 VERSION="${VERSION:-v0.1.0-rc5}"

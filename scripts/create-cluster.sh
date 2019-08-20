@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This script handles the creation of a cluster using kind and the
 # ability to create and configure an insecure container registry.
 
