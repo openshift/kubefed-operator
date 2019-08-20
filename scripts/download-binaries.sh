@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This script automates the downloading of binaries 
 # used for smoke testing
 CURL_ARGS="-Ls"

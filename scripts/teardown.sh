@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 NAMESPACE="${NAMESPACE:-default}"
 CLUSTERNAME="${CLUSTERNAME:-cluster1}"
