@@ -307,10 +307,7 @@ spec:
     **Support**: 
     
     The KubeFed operator is purely for prototyping purposes and not
-    supported by any upstream community at this time. Currently, 
-    while in preview, this operator does not support automatic 
-    upgrades. You must remove the old version of the operator
-    manually before installing a new version.
+    supported by any upstream community at this time. Note that at the moment uninstalling the operator doesn't delete the custom resources it reconciles. Users may optionally want to delete the custom resources and the associated CRDs before reinstalling the upgraded version of the operator.
 
 
     ## Start using the operator
@@ -321,9 +318,11 @@ spec:
     manage objects _only_ in `my-namespace` in the host cluster and target
     clusters.
     
-    The operator provides the following CRDs for deploying components of a `KubeFed` control plane in a given cluster:
+    You must create the `KubeFedWebHook` and `KubeFed` custom resources (CRs) for KubeFed deployment. 
+    The operator will create the following CRDs automatically for deploying components of a `KubeFed` control plane in a given cluster:
     * KubeFedWebHook
-    * KubeFed
+    * KubeFed  
+
     ### KubeFed deployment
     Follow these steps to deploy a KubeFed control plane:
 
@@ -352,24 +351,21 @@ spec:
     `kube-federation-system` as the name of this namespace.
 
     ```
-    $ kubectl get po -n <namespace>
+    $ oc get po -n <namespace>
       NAME                               READY   STATUS    RESTARTS   AGE
       kubefed-operator-db58d9b89-8694x   1/1     Running   0          15s
 
     ```
     * Create a `KubeFedWebHook` resource to instantiate an admission webhook
-    controller for KubeFed. It's recommended to install this CR with
-    `scope:Cluster` to allow the webhook controller to serve API requests coming
-    from all KubeFed control planes within the same cluster.
+    controller for KubeFed.
     ```
-    $ cat <<-EOF | kubectl apply -n <namespace> -f -
+    $ cat <<-EOF | oc apply -n <namespace> -f -
     ---
     apiVersion: operator.kubefed.io/v1alpha1
     kind: KubeFedWebHook
     metadata:
       name: kubefed-webhook-resource
     spec: 
-      scope: Cluster 
     ---
     ```
     * Create a `KubeFed` resource to drive the installation of a KubeFed control
@@ -378,7 +374,7 @@ spec:
     `StorageClass`, create this CR with `scope:Cluster`.
     
     ```
-    $ cat <<-EOF | kubectl apply -n <namespace> -f -
+    $ cat <<-EOF | oc apply -n <namespace> -f -
     ---
     apiVersion: operator.kubefed.io/v1alpha1
     kind: KubeFed
@@ -389,7 +385,7 @@ spec:
     ---
     ```
     ```
-    $ kubectl get po -n <namespace> 
+    $ oc get po -n <namespace> 
     NAME                                          READY   STATUS    RESTARTS   AGE
     kubefed-admission-webhook-77f7bd89dd-92kzj    1/1     Running   0          25s
     kubefed-controller-manager-67d5d5cc99-5t2fk   1/1     Running   0          25s
@@ -437,13 +433,13 @@ spec:
      the authentication token used to connect to that cluster.
 
       ```
-      $ kubectl get kubefedclusters -n <namespace>
+      $ oc get kubefedclusters -n <namespace>
         NAME            READY     AGE
       <cluster-name>    True      7s
 
       ```
       ``` 
-      $ kubectl get kubefedclusters cluster-name -o yaml                                                                                                                                                                     
+      $ oc get kubefedclusters cluster-name -o yaml                                                                                                                                                                     
         apiVersion: v1
         items:
         - apiVersion: core.kubefed.io/v1beta1
