@@ -3,8 +3,8 @@
 # Default values
 NAMESPACE="${NAMESPACE:-default}"
 LOCATION="${LOCATION:-local}"
-VERSION="${VERSION:-v0.1.0-rc5}"
-IMAGE_NAME="${IMAGE_NAME:-quay.io/openshift/kubefed-operator:v0.1.0-rc5}"
+VERSION="${VERSION:-v0.1.0-rc6}"
+IMAGE_NAME="${IMAGE_NAME:-quay.io/openshift/kubefed-operator:v0.1.0-rc6}"
 SCOPE="${SCOPE:-Namespaced}"
 while getopts “n:d:i:s:o:” opt; do
     case $opt in

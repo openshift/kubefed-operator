@@ -18,7 +18,7 @@ spec:
       serviceAccountName: kubefed-admission-webhook
       containers:
       - name: admission-webhook
-        image: quay.io/kubernetes-multicluster/kubefed:v0.1.0-rc5
+        image: quay.io/kubernetes-multicluster/kubefed:v0.1.0-rc6
         imagePullPolicy: Always
         command:
           - "/hyperfed/webhook"
