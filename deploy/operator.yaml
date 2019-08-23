@@ -16,7 +16,7 @@ spec:
       containers:
         - name: kubefed-operator
           # Replace this with the built image name
-          image: quay.io/openshift/kubefed-operator:v0.1.0-rc5
+          image: quay.io/openshift/kubefed-operator:v0.1.0-rc6
           command:
           - kubefed-operator
           imagePullPolicy: Always
