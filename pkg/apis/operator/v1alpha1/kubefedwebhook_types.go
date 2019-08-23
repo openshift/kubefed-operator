@@ -38,7 +38,7 @@ type KubeFedWebHook struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   KubeFedWebHookSpec   `json:"spec,omitempty"`
+	Spec   KubeFedWebHookSpec   `json:"spec"`
 	Status KubeFedWebHookStatus `json:"status,omitempty"`
 }
 

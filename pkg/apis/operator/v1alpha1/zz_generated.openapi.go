@@ -141,6 +141,7 @@ func schema_pkg_apis_operator_v1alpha1_KubeFedWebHook(ref common.ReferenceCallba
 						},
 					},
 				},
+				Required: []string{"spec"},
 			},
 		},
 		Dependencies: []string{
