@@ -32,6 +32,10 @@ spec:
           - type: "nullable"
           - type: object
         status:
+          properties:
+            version:
+              description: The version of the installed release
+              type: string
           type: object
   version: v1alpha1
   versions:
