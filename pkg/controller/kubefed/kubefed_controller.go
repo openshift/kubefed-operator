@@ -139,7 +139,7 @@ func resourceScopeFilter(resources []unstructured.Unstructured, scope kubefedv1a
 // by adding the federation scope env. variable for namespace scoped deployments
 func resourceEnvUpdate(scope kubefedv1alpha1.InstallationScope, ns, name string) mf.Transformer {
 	return func(u *unstructured.Unstructured) error {
-		reqLogger := log.WithValues("Instance.Namespace", ns, "Instance.Name", name)
+		reqLogger := log.WithValues("Instance.Namespace", ns, "Instance.Name", name, "Instance.scope", scope)
 		kubefedScope := "Namespaced"
 		if scope == kubefedv1alpha1.InstallationScopeClusterScoped {
 			kubefedScope = "Cluster"
@@ -162,7 +162,11 @@ func resourceEnvUpdate(scope kubefedv1alpha1.InstallationScope, ns, name string)
 				if !checkEnvExists(envs, "name", "DEFAULT_KUBEFED_SCOPE") {
 					fse := map[string]interface{}{"name": "DEFAULT_KUBEFED_SCOPE", "value": kubefedScope}
 					envs = append(envs, fse)
+				} else {
+					reqLogger.Info("Env variable already exists", "envs", envs)
+					updateEnvVal(envs, "name", "DEFAULT_KUBEFED_SCOPE", "value", kubefedScope)
 				}
+
 				reqLogger.Info("Transforming deployment resource for environment update - env; ", "envs", envs)
 				envErr = unstructured.SetNestedSlice(containers[0].(map[string]interface{}), envs, "env")
 				if envErr != nil {
@@ -181,7 +185,25 @@ func resourceEnvUpdate(scope kubefedv1alpha1.InstallationScope, ns, name string)
 	}
 }
 
-// This function checks if the fedearation scope environment variable exists in the env array
+// This function updates the envValTag field's value with envVal for the environment variable pointed by the envKey, envName
+func updateEnvVal(envs []interface{}, envKey, envName, envValTag, envVal string) bool {
+	for _, envInterface := range envs {
+		env := envInterface.(map[string]interface{})
+		if key, ok := env[envKey]; ok {
+			if key == envName {
+				if val, ok := env[envValTag]; ok {
+					if val != envVal {
+						env[envValTag] = envVal
+						return true
+					}
+				}
+			}
+		}
+	}
+	return false
+}
+
+// This function checks if the federation scope environment variable exists in the env array
 func checkEnvExists(envs []interface{}, envKey, envName string) bool {
 	for _, envInterface := range envs {
 		env := envInterface.(map[string]interface{})
