@@ -358,6 +358,7 @@ spec:
           - list
           - create
           - update
+          - delete
         - apiGroups:
           - types.kubefed.io
           resources:
