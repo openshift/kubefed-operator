@@ -32,7 +32,7 @@ metadata:
       Federation.
     repository: https://github.com/openshift/kubefed-operator
     support: Red Hat
-  name: kubefed-operator.v4.2.0
+  name: kubefed-operator.v4.3.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -64,17 +64,17 @@ spec:
       name: federatedservicestatuses.core.kubefed.io
       version: v1alpha1
     - description: FederatedTypeConfig programs kubefed to know about a single API type - the "target type" - that a user wants to federate.
-      displayName: FederatedTypeConfig 
+      displayName: FederatedTypeConfig
       kind: FederatedTypeConfig
       name: federatedtypeconfigs.core.kubefed.io
       version: v1beta1
     - description: KubeFedConfig
-      displayName: KubeFedConfig 
+      displayName: KubeFedConfig
       kind: KubeFedConfig
       name: kubefedconfigs.core.kubefed.io
       version: v1beta1
     - description: IngressDNSRecord associates one or more Kubernetes Ingress and how to access the Kubernetes Ingress resources, with a scheme for constructing Domain Name System (DNS) resource records for the Ingress.
-      displayName: IngressDNSRecord 
+      displayName: IngressDNSRecord
       kind: IngressDNSRecord
       name: ingressdnsrecords.multiclusterdns.kubefed.io
       version: v1alpha1
@@ -120,8 +120,8 @@ spec:
     quickly get up and running with this powerful concept. Federation is a key
     part of any Hybrid Cloud capability.
 
-    **Support**: 
-    
+    **Support**:
+
     The KubeFed operator is purely for prototyping purposes and not
     supported by any upstream community at this time. Note that at the moment uninstalling the operator doesn't delete the custom resources it reconciles. Users may optionally want to delete the custom resources and the associated CRDs before reinstalling the upgraded version of the operator.
 
@@ -133,11 +133,11 @@ spec:
     this package in a namespace `my-namespace`, KubeFed will be deployed to
     manage objects _only_ in `my-namespace` in the host cluster and target
     clusters.
-    
-    You must create the `KubeFedWebHook` and `KubeFed` custom resources (CRs) for KubeFed deployment. 
+
+    You must create the `KubeFedWebHook` and `KubeFed` custom resources (CRs) for KubeFed deployment.
     The operator will create the following CRDs automatically for deploying components of a `KubeFed` control plane in a given cluster:
     * KubeFedWebHook
-    * KubeFed  
+    * KubeFed
 
     ### KubeFed deployment
     Follow these steps to deploy a KubeFed control plane:
@@ -147,7 +147,7 @@ spec:
     The KubeFed operator only needs to be installed in the host cluster for the
     deployment. It does not need to be installed in each individual target cluster.
 
-    **Important Notes**: 
+    **Important Notes**:
 
     * It's recommended to deploy KubeFed in either a namespace-scoped or
     cluster-scoped mode but not both ways as deploying a cluster-scoped and
@@ -156,7 +156,7 @@ spec:
     namespace-scoped control plane and the managed resources will never converge
     on the desired state. For more information, use this
     [link](https://github.com/openshift/federation-dev/blob/master/docs/kubefed-scope.md)
-    
+
     * A KubeFed control plane does not need to be installed on each cluster that
     it will manage. Clusters whose resources are intended to be managed by
     KubeFed need to be registered with the managing control plane, and the
@@ -181,7 +181,7 @@ spec:
     kind: KubeFedWebHook
     metadata:
       name: kubefed-webhook-resource
-    spec: 
+    spec:
     ---
     EOF
     ```
@@ -189,7 +189,7 @@ spec:
     plane setting the scope to be either `Namespaced` or `Cluster`. If you're
     planning to federate a cluster-scoped resource type like, for example
     `StorageClass`, create this CR with `scope:Cluster`.
-    
+
     ```
     $ cat <<-EOF | oc apply -n <namespace> -f -
     ---
@@ -197,19 +197,19 @@ spec:
     kind: KubeFed
     metadata:
       name: kubefed-resource
-    spec: 
-      scope: Cluster 
+    spec:
+      scope: Cluster
     ---
     EOF
     ```
     ```
-    $ oc get po -n <namespace> 
+    $ oc get po -n <namespace>
     NAME                                          READY   STATUS    RESTARTS   AGE
     kubefed-admission-webhook-77f7bd89dd-92kzj    1/1     Running   0          25s
     kubefed-controller-manager-67d5d5cc99-5t2fk   1/1     Running   0          25s
     kubefed-controller-manager-67d5d5cc99-b865z   1/1     Running   0          25s
     kubefed-operator-db58d9b89-8694x              1/1     Running   0          61s
-    
+
     ```
     ### Installing the KubeFed CLI tool
 
@@ -226,7 +226,7 @@ spec:
     ```
     ### Joining Clusters
 
-    Use the `kubefedctl join` command to connect clusters you want KubeFed to manage resources in. The `join` operation reads information 
+    Use the `kubefedctl join` command to connect clusters you want KubeFed to manage resources in. The `join` operation reads information
     about how to connect to the joining cluster and the cluster hosting federation from your local KUBECONFIG.
 
     ```
@@ -235,19 +235,19 @@ spec:
         --host-cluster-context mycluster \       # name of a KUBECONFIG context for the hosting cluster (required when the current-context isn't set correctly.)
         --kubefed-namespace=<namespace> \        # namespace where KubeFed is deployed (required when the kubefed-namespace isn't `kube-federation-system`)
         -v 2
-    ``` 
-    **Note**:     
+    ```
+    **Note**:
     * If you're using an openshift cluster for deploying the KubeFed operator then
      use the following command to rename the context to a consumable format.
-     
+
      ```
      $ kubectl config rename-context $(kubectl config current-context) <cluster-name>
-     
+
      ```
 
      `kubefedctl join` creates `KubeFedCluster` resource named `<cluster-name>` to represent the joined cluster.
 
-     KubeFedCluster resources configure the API endpoint of a registered cluster and reference a local secret containing 
+     KubeFedCluster resources configure the API endpoint of a registered cluster and reference a local secret containing
      the authentication token used to connect to that cluster.
 
       ```
@@ -256,8 +256,8 @@ spec:
       <cluster-name>    True      7s
 
       ```
-      ``` 
-      $ oc get kubefedclusters cluster-name -o yaml                                                                                                                                                                     
+      ```
+      $ oc get kubefedclusters cluster-name -o yaml
         apiVersion: v1
         items:
         - apiVersion: core.kubefed.io/v1beta1
@@ -295,11 +295,11 @@ spec:
     * [Blog](https://blog.openshift.com/federation-v2-is-now-kubefed/)
 
 
-    ### Contribution 
+    ### Contribution
     If you've got some ideas or use cases for KubeFed operator, we would love to hear them!
     * Raise issues on [GitHub](https://github.com/openshift/kubefed-operator/issues).
     * [Join our community](https://github.com/kubernetes/community/tree/master/sig-multicluster#contact)
-    
+
     ### License
     KubeFed is licensed under the [Apache License, Version 2.0](https://github.com/kubernetes-sigs/kubefed/blob/master/LICENSE) license.
   displayName: Kubefed Operator
@@ -634,4 +634,4 @@ spec:
   maturity: alpha
   provider:
     name: Red Hat
-  version: 4.2.0
+  version: 4.3.0
